@@ -29,6 +29,14 @@
 
     <canvas id="snow-canvas"></canvas>
 
+    <!-- 배경 레이어 6개 미리 세팅 -->
+    <div class="bg-layer bg-dark-snow"></div>
+    <div class="bg-layer bg-dark-rain"></div>
+    <div class="bg-layer bg-dark-none"></div>
+    <div class="bg-layer bg-light-snow"></div>
+    <div class="bg-layer bg-light-rain"></div>
+    <div class="bg-layer bg-light-none"></div>
+
     <div class="container">
         <!-- 상단 컨트롤 영역 (다크모드 토글 & 언어 선택) -->
         <div class="header-controls">
@@ -316,6 +324,7 @@
     <script src="js/main.js"></script>
 
     <!-- 자바스크립트 -->
+    <!-- 자바스크립트 -->
     <script>
         const translations = {
             ko: {
@@ -453,7 +462,6 @@
         const langSelect = document.getElementById('langSelect');
         let currentLang = 'ko';
 
-        // 언어 변경 함수
         function changeLanguage(lang) {
             currentLang = lang;
             const keys = translations[lang];
@@ -473,12 +481,10 @@
             changeLanguage(e.target.value);
         });
 
-        // 페이지 초기 언어 설정
         const savedLang = localStorage.getItem('preferred_lang') || 'ko';
         langSelect.value = savedLang;
         changeLanguage(savedLang);
 
-        // 클립보드 복사 기능
         function copyEmail(emailText) {
             navigator.clipboard.writeText(emailText).then(() => {
                 const toastMsg = translations[currentLang]?.copy_toast || "복사되었습니다!";
@@ -488,9 +494,7 @@
             });
         }
 
-        // 특정 링크 주소 복사 함수
         function copyLink(event, url) {
-            // 화살표 클릭 시 카드의 href 링크 이동을 방지
             event.preventDefault();
             event.stopPropagation();
         
@@ -510,45 +514,6 @@
             setTimeout(() => {
                 toast.classList.remove("show");
             }, 2000);
-        }
-
-        const themeToggleBtn = document.getElementById("theme-toggle");
-
-        // Lucide Icons의 해(Sun) SVG 코드
-        const sunIconSVG = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="4"></circle>
-          <path d="M12 2v2"></path>
-          <path d="M12 20v2"></path>
-          <path d="m4.93 4.93 1.41 1.41"></path>
-          <path d="m17.66 17.66 1.41 1.41"></path>
-          <path d="M2 12h2"></path>
-          <path d="M20 12h2"></path>
-          <path d="m6.34 17.66-1.41 1.41"></path>
-          <path d="m19.07 4.93-1.41 1.41"></path>
-        </svg>
-        `;
-
-        // Font Awesome의 달(Moon) Icon 코드
-        const moonIconHTML = `<i class="fa-solid fa-moon"></i>`;
-
-        // 버튼 클릭 이벤트
-        themeToggleBtn.addEventListener("click", () => {
-            document.body.classList.toggle("light-mode");
-
-            if (document.body.classList.contains("light-mode")) {
-                themeToggleBtn.innerHTML = sunIconSVG; // 라이트 모드일 때 Lucide 해 아이콘
-                localStorage.setItem("theme", "light");
-            } else {
-                themeToggleBtn.innerHTML = moonIconHTML; // 다크 모드일 때 기존 달 아이콘
-                localStorage.setItem("theme", "dark");
-            }
-        });
-
-        // 페이지 첫 로드 시 저장된 테마 불러오기
-        if (localStorage.getItem("theme") === "light") {
-            document.body.classList.add("light-mode");
-            themeToggleBtn.innerHTML = sunIconSVG;
         }
     </script>
 </body>

@@ -1,3 +1,6 @@
+/* ==========================================
+   1. 기본 변수 및 테마 설정 (배경 관련 변수 제거)
+   ========================================== */
 :root {
     --bg-color: #0f1117;
     --card-bg: rgba(255, 255, 255, 0.05);
@@ -7,28 +10,79 @@
     --accent-gradient: linear-gradient(135deg, #7c5cff, #ff6584);
     --text-main: #f0f3f8;
     --text-sub: #a0a5b5;
-    
-    /* [다크 모드] 배경 및 오버레이 */
-    --bg-overlay: rgba(15, 17, 23, 0.85);
-    --bg-image: url('../img/background.jpg');
-    --bg-light-opacity: 0; /* 라이트 모드 배경 투명도 */
 }
 
-/* [라이트 모드] 변수 설정 */
+CSS
+/* 기본 (다크 모드 또는 기본 스타일) */
+body {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* 라이트 모드가 켜졌을 때 적용될 스타일 */
 body.light-mode {
-    --bg-color: #f4f6fa;
-    --card-bg: rgba(255, 255, 255, 0.7);
-    --card-hover-bg: rgba(255, 255, 255, 1);
-    --border-color: rgba(0, 0, 0, 0.08);
-    --text-main: #1e2029;
-    --text-sub: #636b7a;
-    
-    --bg-light-opacity: 1; /* 라이트 모드 시 가상 요소 표시 */
-    
-    /* 👇 여기에 추가해서 오버레이 투명도를 조절하시면 됩니다! */
-    --bg-overlay: rgba(255, 255, 255, 0.85); /* 0.85 -> 숫자가 클수록 흰색이 진해짐 (0.0 ~ 1.0) */
+    background-color: #f5f5f5;
+    color: #333333;
 }
 
+body.light {
+    --bg-color: #f5f7fa;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-hover-bg: rgba(255, 255, 255, 0.9);
+    --border-color: rgba(0, 0, 0, 0.08);
+    --text-main: #1f2937;
+    --text-sub: #6b7280;
+}
+
+/* ==========================================
+   2. 배경 이미지 레이어 설정 (페이드 인/아웃 핵심)
+   ========================================== */
+/* 모든 배경 레이어 공통 스타일 (기본적으로 투명하게 숨김) */
+.bg-layer {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -2;
+    opacity: 0; /* 전부 숨김 */
+    transition: opacity 0.6s ease-in-out; /* ★ 부드러운 페이드 효과 ★ */
+    will-change: opacity;
+}
+
+/* 각 배경별 이미지 및 오버레이 그라데이션 고정 */
+.bg-dark-snow { background-image: linear-gradient(rgba(15, 17, 23, 0.85), rgba(15, 17, 23, 0.85)), url('../img/background-snow-dark.webp'); }
+.bg-dark-rain { background-image: linear-gradient(rgba(15, 17, 23, 0.85), rgba(15, 17, 23, 0.85)), url('../img/background-rain-dark.webp'); }
+.bg-dark-none { background-image: linear-gradient(rgba(15, 17, 23, 0.85), rgba(15, 17, 23, 0.85)), url('../img/background-clear-dark.webp'); }
+
+.bg-light-snow { background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('../img/background-snow-light.webp'); }
+.bg-light-rain { background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('../img/background-rain-light.webp'); }
+.bg-light-none { background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('../img/background-clear-light.webp'); }
+
+/* 
+  현재 body의 클래스 조합에 맞는 레이어만 opacity를 1로 올려서 서서히 보여줌 
+*/
+/* 다크 모드 */
+body:not(.light).weather-snow .bg-dark-snow,
+body.dark.weather-snow .bg-dark-snow { opacity: 1; }
+
+body:not(.light).weather-rain .bg-dark-rain,
+body.dark.weather-rain .bg-dark-rain { opacity: 1; }
+
+body:not(.light).weather-none .bg-dark-none,
+body.dark.weather-none .bg-dark-none { opacity: 1; }
+
+/* 라이트 모드 */
+body.light.weather-snow .bg-light-snow { opacity: 1; }
+body.light.weather-rain .bg-light-rain { opacity: 1; }
+body.light.weather-none .bg-light-none { opacity: 1; }
+
+/* 기존 body::after 관련 코드는 완전히 삭제하세요 */
+
+/* ==========================================
+   3. 글로벌 초기화 및 레이아웃
+   ========================================== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -42,53 +96,22 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* ★ 중앙 정렬 핵심 속성 ★ */
     padding: 40px 20px;
     position: relative;
     z-index: 0;
     transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* [다크 모드] 기본 배경 레이어 (body ::after) */
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(rgba(15, 17, 23, 0.85), rgba(15, 17, 23, 0.85)), url('../img/background.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: -2;
-}
-
-/* [라이트 모드] 배경 레이어 (body ::before) - opacity로 부드러운 페이드 인/아웃 구현 */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('../img/background-light.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: var(--bg-light-opacity);
-    transition: opacity 0.4s ease-in-out;
-    z-index: -1;
-}
-
-/* Container */
 /* Container */
 .container {
     width: 100%;
-    max-width: 1400px; /* 기존 1100px에서 1400px (또는 1500px)로 변경 */
+    max-width: 1400px;
 }
 
-/* Header Controls (Theme Toggle + Language Selector) */
+/* ==========================================
+   4. Header Controls (Theme & Lang)
+   ========================================== */
 .header-controls {
     display: flex;
     justify-content: flex-end;
@@ -119,6 +142,16 @@ body::before {
     color: var(--accent-color);
 }
 
+.theme-btn svg {
+    display: block;
+    stroke: var(--text-main);
+    transition: stroke 0.2s ease;
+}
+
+.theme-btn:hover svg {
+    stroke: var(--accent-color);
+}
+
 .lang-select {
     background-color: var(--card-bg);
     color: var(--text-main);
@@ -144,7 +177,14 @@ body::before {
     color: #f0f3f8;
 }
 
-/* Profile Header */
+body.light .lang-select option {
+    background-color: #ffffff;
+    color: #1f2937;
+}
+
+/* ==========================================
+   5. Profile Header
+   ========================================== */
 .profile-header {
     text-align: center;
     margin-bottom: 36px;
@@ -183,7 +223,6 @@ body::before {
     line-height: 1.5;
 }
 
-/* Profile Email (Click to Copy) */
 .profile-email {
     font-size: 0.9rem;
     color: var(--text-sub);
@@ -208,7 +247,9 @@ body::before {
     color: var(--accent-color);
 }
 
-/* Section Layout */
+/* ==========================================
+   6. Link Cards & Grid Section
+   ========================================== */
 .section {
     margin-bottom: 28px;
 }
@@ -229,7 +270,6 @@ body::before {
     color: var(--accent-color);
 }
 
-/* Grid Links */
 .grid-links {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr)); 
@@ -248,7 +288,6 @@ body::before {
     }
 }
 
-/* Link Card Style */
 .link-card {
     display: flex;
     align-items: center;
@@ -314,11 +353,10 @@ body::before {
     transition: opacity 0.25s, transform 0.25s, color 0.25s;
     margin-left: 8px;
     flex-shrink: 0;
-    padding: 6px; /* 클릭 영역 확보 */
+    padding: 6px;
     border-radius: 6px;
 }
 
-/* 화살표 아이콘 자체에 마우스를 올렸을 때 강조 효과 */
 .link-arrow:hover {
     opacity: 1 !important;
     color: var(--accent-color) !important;
@@ -331,67 +369,15 @@ body::before {
     color: var(--text-main);
 }
 
-/* Custom Icon Image */
 .custom-icon-img {
     width: 22px;
     height: 22px;
     object-fit: contain;
 }
 
-/* Toast Message */
-.toast {
-    visibility: hidden;
-    min-width: 220px;
-    background-color: var(--accent-color);
-    color: #ffffff;
-    text-align: center;
-    border-radius: 8px;
-    padding: 12px 20px;
-    position: fixed;
-    z-index: 1000;
-    left: 50%;
-    bottom: 30px;
-    transform: translateX(-50%);
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    opacity: 0;
-    transition: opacity 0.3s, bottom 0.3s;
-}
-
-.toast.show {
-    visibility: visible;
-    opacity: 1;
-    bottom: 40px;
-}
-
-.theme-btn {
-    background-color: var(--card-bg);
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(10px);
-}
-
-/* SVG 아이콘 중앙 정렬 및 색상 처리 */
-.theme-btn svg {
-    display: block;
-    stroke: var(--text-main); /* 현재 글자 색상과 동일하게 맞춤 */
-}
-
-.theme-btn:hover svg {
-    stroke: var(--accent-color); /* 호버 시 강조 색상 변경 */
-}
-
-/* Live ON Badge Style */
+/* ==========================================
+   7. Live ON Badge & Toast
+   ========================================== */
 .live-status {
     display: inline-flex;
     align-items: center;
@@ -432,18 +418,45 @@ body::before {
     }
 }
 
-/* 눈 내리는 이펙트 Canvas */
+.toast {
+    visibility: hidden;
+    min-width: 220px;
+    background-color: var(--accent-color);
+    color: #ffffff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 12px 20px;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transition: opacity 0.3s, bottom 0.3s;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 40px;
+}
+
+/* ==========================================
+   8. Effects & Footer
+   ========================================== */
 #snow-canvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    pointer-events: none; /* 클릭 이벤트가 아래 요소로 통과되도록 설정 */
-    z-index: 9999; /* 최상단 레이어 위치 */
+    pointer-events: none;
+    z-index: 9999;
 }
 
-/* Footer */
 footer {
     margin-top: auto;
     text-align: center;

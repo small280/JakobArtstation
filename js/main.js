@@ -84,7 +84,7 @@ function initWeatherSystem() {
         };
     }
 
-    // 초기 입자 배열 (시작 시 화면 전체에 배치)
+    // 초기 입자 배열
     let snowParticles = targetMode === 'snow' 
         ? Array.from({ length: 40 }, () => createSnowflake(false)) 
         : [];
@@ -95,13 +95,11 @@ function initWeatherSystem() {
 
     const ripples = [];
 
-    // 토글 버튼 클릭 시 호출하여 자연스러운 시차를 두고 화면 전체에 균일하게 떨어지도록 생성
+    // 토글 버튼 클릭 시 호출
     resetWeatherParticles = function(mode) {
         if (mode === 'snow') {
             snowParticles = Array.from({ length: 40 }, () => {
                 const flake = createSnowflake(false);
-                // y 위치 범위를 화면 위쪽(-height ~ height)까지 넓게 분산시켜
-                // 자연스러운 시차를 두고 순차적으로 떨어지게 만듭니다.
                 flake.y = (Math.random() * height * 2) - height;
                 return flake;
             });
@@ -142,17 +140,20 @@ function initWeatherSystem() {
     // ------------------------------------------
     function render() {
         ctx.clearRect(0, 0, width, height);
+
+        // [수정 포인트] 라이트 모드 판별을 'light-mode' 기준으로 통일
         const isLightMode = document.body.classList.contains('light-mode');
 
-        const snowBaseColor = isLightMode ? `90, 110, 140` : `255, 255, 255`;
-        const rainBaseColor = isLightMode ? `70, 100, 150` : `180, 210, 255`;
+        // 다크 모드일 때는 흰색, 라이트 모드일 때는 잘 보이는 어두운 블루/회색조 컬러로 설정
+        const snowBaseColor = isLightMode ? `70, 130, 180` : `255, 255, 255`;
+        const rainBaseColor = isLightMode ? `65, 105, 225` : `255, 255, 255`;
 
-        // 1. 눈 모드일 때 내려가서 사라진 입자 상단 보충
+        // 1. 눈 모드 상단 보충
         if (targetMode === 'snow' && snowParticles.length < 40) {
             snowParticles.push(createSnowflake(true));
         }
 
-        // 2. 비 모드일 때 내려가서 사라진 입자 상단 보충
+        // 2. 비 모드 상단 보충
         if (targetMode === 'rain' && rainDrops.length < 80) {
             rainDrops.push(createRainDrop(true));
         }
@@ -164,7 +165,7 @@ function initWeatherSystem() {
             const p = snowParticles[i];
 
             if (targetMode !== 'snow') {
-                p.opacity -= 0.015; // 디졸브
+                p.opacity -= 0.015;
             }
 
             if (p.opacity <= 0) {
@@ -172,8 +173,7 @@ function initWeatherSystem() {
                 continue;
             }
 
-            const alpha = isLightMode ? p.opacity * 0.7 : p.opacity;
-            drawSnowflake(p.x, p.y, p.size, `rgba(${snowBaseColor}, ${alpha})`, p.rotation);
+            drawSnowflake(p.x, p.y, p.size, `rgba(${snowBaseColor}, ${p.opacity})`, p.rotation);
 
             p.y += p.speedY;
             p.x += p.speedX;
@@ -196,7 +196,7 @@ function initWeatherSystem() {
             const d = rainDrops[i];
 
             if (targetMode !== 'rain') {
-                d.opacity -= 0.02; // 디졸브
+                d.opacity -= 0.02;
             }
 
             if (d.opacity <= 0) {
@@ -264,17 +264,61 @@ function initWeatherSystem() {
     render();
 }
 
-// ------------------------------------------
-// 3. 날씨 토글 버튼 이벤트
-// ------------------------------------------
+// ==========================================
+// 3. 날씨 및 테마 관리
+// ==========================================
+function applyWeatherClass(mode) {
+    document.body.classList.remove('weather-snow', 'weather-rain', 'weather-none');
+    document.body.classList.add(`weather-${mode}`);
+}
+
+// 라이트/다크 모드 토글 함수
+function toggleTheme() {
+    const themeBtn = document.getElementById("theme-toggle");
+    
+    // light-mode 토글
+    const isLight = document.body.classList.toggle('light-mode');
+    
+    if (isLight) {
+        document.body.classList.add('light');
+        document.body.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.remove('light', 'light-mode');
+        document.body.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+    }
+    
+    if (themeBtn) {
+        if (isLight) {
+            themeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="m4.93 4.93 1.41 1.41"></path>
+              <path d="m17.66 17.66 1.41 1.41"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="m6.34 17.66-1.41 1.41"></path>
+              <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>`;
+        } else {
+            themeBtn.innerHTML = `<i class="fa-solid fa-moon"></i>`;
+        }
+    }
+
+    applyWeatherClass(targetMode);
+}
+
 function setupWeatherToggle() {
     const weatherBtn = document.getElementById('weather-toggle');
     if (!weatherBtn) return;
 
+    applyWeatherClass(targetMode);
     updateWeatherIcon(weatherBtn, targetMode);
 
     weatherBtn.addEventListener('click', () => {
-        // 순환: 눈(snow) -> 비(rain) -> 맑음(none) -> 눈(snow)
         if (targetMode === 'snow') {
             targetMode = 'rain';
         } else if (targetMode === 'rain') {
@@ -284,9 +328,10 @@ function setupWeatherToggle() {
         }
 
         localStorage.setItem('weather', targetMode);
+
+        applyWeatherClass(targetMode);
         updateWeatherIcon(weatherBtn, targetMode);
 
-        // [수정] 전환된 날씨 입자를 화면 전체에 즉시 채워 불연속 현상 방지
         if (typeof resetWeatherParticles === 'function') {
             resetWeatherParticles(targetMode);
         }
@@ -301,7 +346,6 @@ function updateWeatherIcon(btn, mode) {
         btn.innerHTML = `<i class="fa-solid fa-cloud-showers-heavy"></i>`;
         btn.setAttribute('title', 'Rain');
     } else {
-        // 맑음(none) 모드일 때 SVG 해 모양 아이콘 적용
         btn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"></circle>
@@ -315,7 +359,7 @@ function updateWeatherIcon(btn, mode) {
           <path d="m19.07 4.93-1.41 1.41"></path>
         </svg>
         `;
-        btn.setAttribute('title', 'Sunny');
+        btn.setAttribute('title', 'Clear');
     }
 }
 
@@ -323,13 +367,49 @@ function updateWeatherIcon(btn, mode) {
 // 4. 페이지 이벤트 초기화
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. 초기 테마 로드
+    const savedTheme = localStorage.getItem('theme');
+    const themeBtn = document.getElementById('theme-toggle');
+
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode', 'light');
+        document.body.classList.remove('dark');
+        if (themeBtn) {
+            themeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="m4.93 4.93 1.41 1.41"></path>
+              <path d="m17.66 17.66 1.41 1.41"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="m6.34 17.66-1.41 1.41"></path>
+              <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>`;
+        }
+    } else {
+        document.body.classList.add('dark');
+        document.body.classList.remove('light-mode', 'light');
+        if (themeBtn) {
+            themeBtn.innerHTML = `<i class="fa-solid fa-moon"></i>`;
+        }
+    }
+
+    // 2. 테마 토글 버튼 이벤트 바인딩
+    if (themeBtn) {
+        // 기존 리스너 중복 방지를 위해 기존 onclick 대신 안전하게 할당
+        themeBtn.onclick = toggleTheme;
+    }
+
     updateLiveStatuses();
-    initWeatherSystem();
     setupWeatherToggle();
+    initWeatherSystem();
+    // ... (이하 생략)
 
     const linkCards = document.querySelectorAll('.link-card');
     linkCards.forEach(card => {
-        card.addEventListener('click', (e) => {
+        card.addEventListener('click', () => {
             const title = card.querySelector('.link-title')?.textContent || 'Unknown';
             const url = card.getAttribute('href');
 
