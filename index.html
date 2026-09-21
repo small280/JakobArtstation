@@ -1,1 +1,303 @@
-Hello World!
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jakob | Links & Contacts</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #0f1117;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-hover-bg: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-color: #7c5cff;
+            --accent-gradient: linear-gradient(135deg, #7c5cff, #ff6584);
+            --text-main: #f0f3f8;
+            --text-sub: #a0a5b5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .profile-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            padding: 3px;
+            margin: 0 auto 16px;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #1a1c23;
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .profile-bio {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Section Layout */
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+
+        .section-title i {
+            color: var(--accent-color);
+        }
+
+        /* Horizontal Grid / List */
+        .grid-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 14px;
+        }
+
+        /* Link Card Style */
+        .link-card {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.25s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .link-card:hover {
+            background: var(--card-hover-bg);
+            border-color: rgba(124, 92, 255, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .link-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            margin-right: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-color);
+        }
+
+        .link-info {
+            flex-grow: 1;
+        }
+
+        .link-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .link-desc {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .link-arrow {
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            opacity: 0.5;
+            transition: opacity 0.25s;
+        }
+
+        .link-card:hover .link-arrow {
+            opacity: 1;
+            color: var(--text-main);
+        }
+
+        /* Custom Colors for Icons */
+        .icon-chzzk { color: #00ffa3; }
+        .icon-twitch { color: #a970ff; }
+        .icon-youtube { color: #ff0000; }
+        .icon-twitter { color: #1da1f2; }
+        .icon-pixiv { color: #0096fa; }
+        .icon-artstation { color: #13aff0; }
+        .icon-discord { color: #5865f2; }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 프로필 헤더 -->
+        <header class="profile-header">
+            <div class="profile-avatar">
+                <!-- 아바타 이미지 주소를 넣으세요 -->
+                <img src="https://via.placeholder.com/150" alt="Profile Picture">
+            </div>
+            <h1 class="profile-name">Jakob</h1>
+            <p class="profile-bio">Digital Illustrator & Game Artist<br>라이브 스트리밍 및 외주 / 커미션 문의</p>
+        </header>
+
+        <!-- LIVE STREAMING 섹션 -->
+        <section class="section">
+            <h2 class="section-title"><i class="fa-solid fa-headset"></i> Live Streaming</h2>
+            <div class="grid-links">
+                <a href="https://chzzk.naver.com/" target="_blank" class="link-card">
+                    <div class="link-icon icon-chzzk"><i class="fa-solid fa-play"></i></div>
+                    <div class="link-info">
+                        <div class="link-title">Chzzk</div>
+                        <div class="link-desc">치지직 생방송 채널</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                </a>
+
+                <a href="https://youtube.com/" target="_blank" class="link-card">
+                    <div class="link-icon icon-youtube"><i class="fa-brands fa-youtube"></i></div>
+                    <div class="link-info">
+                        <div class="link-title">YouTube</div>
+                        <div class="link-desc">다시보기 & 작업 영상</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                </a>
+
+                <a href="https://twitch.tv/" target="_blank" class="link-card">
+                    <div class="link-icon icon-twitch"><i class="fa-brands fa-twitch"></i></div>
+                    <div class="link-info">
+                        <div class="link-title">Twitch</div>
+                        <div class="link-desc">트위치 방송국</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- COMMISSIONS & CONTACT 섹션 -->
+        <section class="section">
+            <h2 class="section-title"><i class="fa-solid fa-palette"></i> Commissions & Contact</h2>
+            <div class="grid-links">
+                <a href="#" target="_blank" class="link-card">
+                    <div class="link-icon"><i class="fa-solid fa-file-pen"></i></div>
+                    <div class="link-info">
+                        <div class="link-title">Commission Info</div>
+                        <div class="link-desc">커미션 안내 및 신청</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                </a>
+
+                <a href="https://discord.gg/" target="_blank" class="link-card">
+                    <div class="link-icon icon-discord"><i class="fa-brands fa-discord"></i></div>
+                    <div class="link-info">
+                        <div class="link-title">Discord Community</div>
+                        <div class="link-desc">팬 커뮤니티 & 공지사항</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- SOCIAL MEDIA & GALLERY 섹션 -->
+        <section class="section">
+            <h2 class="section-title"><i class="fa-solid fa-share-nodes"></i> SNS & Gallery</h2>
+            <div class="grid-links">
+                <a href="https://twitter.com/" target="_blank" class="link-card">
+                    <div class="link-icon icon-twitter"><i class="fa-brands fa-x-twitter"></i></div>
+                    <div class="link-info">
+                        <div class="link-title">X (Twitter)</div>
+                        <div class="link-desc">일러스트 & 신규 소식</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                </a>
+
+                <a href="https://artstation.com/" target="_blank" class="link-card">
+                    <div class="link-icon icon-artstation"><i class="fa-brands fa-artstation"></i></div>
+                    <div class="link-info">
+                        <div class="link-title">ArtStation</div>
+                        <div class="link-desc">포트폴리오 갤러리</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                </a>
+
+                <a href="https://pixiv.net/" target="_blank" class="link-card">
+                    <div class="link-icon icon-pixiv"><i class="fa-solid fa-p"></i></div>
+                    <div class="link-info">
+                        <div class="link-title">Pixiv</div>
+                        <div class="link-desc">픽시브 작품 모음</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            © 2026 Jakob. All rights reserved.
+        </footer>
+    </div>
+
+</body>
+</html>
