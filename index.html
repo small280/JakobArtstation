@@ -150,31 +150,45 @@
         <section class="section">
             <h2 class="section-title"><i class="fa-solid fa-headset"></i> <span data-i18n="sec_live">Live Streaming</span></h2>
             <div class="grid-links">
-                <a href="https://www.youtube.com/@JakobArtstation" target="_blank" class="link-card">
+                <!-- YouTube 카드 -->
+                <a href="https://www.youtube.com/@JakobArtstation" id="card-youtube" target="_blank" class="link-card">
                     <div class="link-icon icon-youtube"><img src="img/icons/youtube.svg" alt="YouTube" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">YouTube</div>
                         <div class="link-desc" data-i18n="youtube_desc">라이브 & 다시보기</div>
                     </div>
+                    <!-- 초록색 ON 뱃지 (기본 숨김) -->
+                    <span class="live-status" style="display: none;">
+                        <span class="live-dot"></span> ON
+                    </span>
                     <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
                 </a>
-
-                <!-- 치지직 (필요 시 LIVE 뱃지 사용: <span class="live-badge">LIVE</span>) -->
-                <a href="https://chzzk.naver.com/66dfdbc6dc43a83a1691ba6ad3562d8f" target="_blank" class="link-card">
+            
+                <!-- 치지직 카드 -->
+                <a href="https://chzzk.naver.com/66dfdbc6dc43a83a1691ba6ad3562d8f" id="card-chzzk" target="_blank" class="link-card">
                     <div class="link-icon icon-chzzk"><img src="img/icons/chzzk.svg" alt="Chzzk" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Chzzk</div>
                         <div class="link-desc" data-i18n="chzzk_desc">치지직 생방송 채널</div>
                     </div>
+                    <!-- 초록색 ON 뱃지 (기본 숨김) -->
+                    <span class="live-status" style="display: none;">
+                        <span class="live-dot"></span> ON
+                    </span>
                     <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
                 </a>
-
-                <a href="https://www.twitch.tv/jakobartstation" target="_blank" class="link-card">
+            
+                <!-- Twitch 카드 -->
+                <a href="https://www.twitch.tv/jakobartstation" id="card-twitch" target="_blank" class="link-card">
                     <div class="link-icon icon-twitch"><img src="img/icons/twitch.svg" alt="Twitch" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Twitch</div>
                         <div class="link-desc" data-i18n="twitch_desc">트위치 생방송 채널</div>
                     </div>
+                    <!-- 초록색 ON 뱃지 (기본 숨김) -->
+                    <span class="live-status" style="display: none;">
+                        <span class="live-dot"></span> ON
+                    </span>
                     <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
                 </a>
             </div>
@@ -244,6 +258,9 @@
 
     <!-- 토스트 알림 팝업 -->
     <div id="toast" class="toast">복사되었습니다!</div>
+
+    <!-- main.js 파일 연결 추가 -->
+    <script src="js/main.js"></script>
 
     <!-- 자바스크립트 -->
     <script>
@@ -424,7 +441,7 @@
         }
 
         const themeToggleBtn = document.getElementById("theme-toggle");
-            
+
         // Lucide Icons의 해(Sun) SVG 코드
         const sunIconSVG = `
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -439,14 +456,14 @@
           <path d="m19.07 4.93-1.41 1.41"></path>
         </svg>
         `;
-        
+
         // Font Awesome의 달(Moon) Icon 코드
         const moonIconHTML = `<i class="fa-solid fa-moon"></i>`;
-        
+
         // 버튼 클릭 이벤트
         themeToggleBtn.addEventListener("click", () => {
             document.body.classList.toggle("light-mode");
-            
+
             if (document.body.classList.contains("light-mode")) {
                 themeToggleBtn.innerHTML = sunIconSVG; // 라이트 모드일 때 Lucide 해 아이콘
                 localStorage.setItem("theme", "light");
@@ -455,7 +472,7 @@
                 localStorage.setItem("theme", "dark");
             }
         });
-        
+
         // 페이지 첫 로드 시 저장된 테마 불러오기
         if (localStorage.getItem("theme") === "light") {
             document.body.classList.add("light-mode");
