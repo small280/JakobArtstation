@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="img/icons/favicon.png">
     
     <!-- External CSS File -->
     <link rel="stylesheet" href="css/style.css">
@@ -23,7 +24,10 @@
       gtag('config', 'G-RWZBF3D6CW');
     </script>
 </head>
+
 <body>
+
+    <canvas id="snow-canvas"></canvas>
 
     <div class="container">
         <!-- 상단 컨트롤 영역 (다크모드 토글 & 언어 선택) -->
@@ -31,6 +35,11 @@
             <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
                 <!-- 기본은 달 모양 (Font Awesome 유지 가능) -->
                 <i class="fa-solid fa-moon"></i>
+            </button>
+
+            <!-- 날씨 토글 버튼 (새로 추가) -->
+            <button id="weather-toggle" class="theme-btn" aria-label="Toggle Weather" title="날씨 변경">
+                <i class="fa-solid fa-snowflake"></i>
             </button>
 
             <div class="lang-selector-wrapper">
@@ -71,7 +80,9 @@
                         <div class="link-title">X (Realism)</div>
                         <div class="link-desc" data-i18n="twitter_realism_desc">실사 & 반실사 일러스트</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://x.com/j_art_realistic')"></i>
                 </a>
 
                 <!-- X (Casual) -->
@@ -81,7 +92,9 @@
                         <div class="link-title">X (Casual)</div>
                         <div class="link-desc" data-i18n="twitter_casual_desc">캐주얼 & 서브컬쳐 일러스트</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://x.com/jakobartstation')"></i>
                 </a>
 
                 <!-- Instagram -->
@@ -91,7 +104,9 @@
                         <div class="link-title">Instagram</div>
                         <div class="link-desc" data-i18n="instagram_desc">갤러리 & 피드</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://www.instagram.com/jakobartstation/')"></i>
                 </a>
 
                 <!-- Pixiv -->
@@ -101,7 +116,9 @@
                         <div class="link-title">Pixiv</div>
                         <div class="link-desc" data-i18n="pixiv_desc">픽시브 작품 모음</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://www.pixiv.net/users/120488892')"></i>
                 </a>
 
                 <!-- Cara -->
@@ -111,7 +128,9 @@
                         <div class="link-title">Cara</div>
                         <div class="link-desc" data-i18n="cara_desc">아티스트 포트폴리오</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://cara.app/jakobartstation')"></i>
                 </a>
 
                 <!-- Bluesky -->
@@ -121,7 +140,9 @@
                         <div class="link-title">Bluesky</div>
                         <div class="link-desc" data-i18n="bluesky_desc">블루스카이 채널</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://bsky.app/profile/jakobartstation.bsky.social')"></i>
                 </a>
 
                 <!-- ArtStation -->
@@ -131,7 +152,9 @@
                         <div class="link-title">ArtStation</div>
                         <div class="link-desc" data-i18n="artstation_desc">포트폴리오 갤러리</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://www.artstation.com/jakobartstation')"></i>
                 </a>
 
                 <!-- Threads -->
@@ -141,7 +164,9 @@
                         <div class="link-title">Threads</div>
                         <div class="link-desc" data-i18n="threads_desc">스레드 일상 & 작업</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://www.threads.com/@jakobartstation')"></i>
                 </a>
 
                 <!-- Reddit -->
@@ -151,7 +176,9 @@
                         <div class="link-title">Reddit</div>
                         <div class="link-desc" data-i18n="reddit_desc">레딧 커뮤니티</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://www.reddit.com/user/JakobArtstation/')"></i>
                 </a>
             </div>
         </section>
@@ -171,7 +198,9 @@
                     <span class="live-status" style="display: none;">
                         <span class="live-dot"></span> ON
                     </span>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://www.youtube.com/@JakobArtstation')"></i>
                 </a>
             
                 <!-- 치지직 카드 -->
@@ -185,7 +214,9 @@
                     <span class="live-status" style="display: none;">
                         <span class="live-dot"></span> ON
                     </span>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://chzzk.naver.com/66dfdbc6dc43a83a1691ba6ad3562d8f')"></i>
                 </a>
             
                 <!-- Twitch 카드 -->
@@ -199,7 +230,9 @@
                     <span class="live-status" style="display: none;">
                         <span class="live-dot"></span> ON
                     </span>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://www.twitch.tv/jakobartstation')"></i>
                 </a>
             </div>
         </section>
@@ -214,7 +247,9 @@
                         <div class="link-title">VGen</div>
                         <div class="link-desc" data-i18n="vgen_desc">Global Commission (VGen)</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://vgen.co/JakobArtstation')"></i>
                 </a>
 
                 <a href="https://www.pixiv.net/request/plans/199712" target="_blank" class="link-card">
@@ -223,7 +258,9 @@
                         <div class="link-title">Pixiv Request</div>
                         <div class="link-desc" data-i18n="pixiv_req_desc">Pixiv 리퀘스트</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://www.pixiv.net/request/plans/199712')"></i>
                 </a>
 
                 <a href="https://crepe.cm/ko/@JakobArtstation" target="_blank" class="link-card">
@@ -232,7 +269,9 @@
                         <div class="link-title">Crepe</div>
                         <div class="link-desc" data-i18n="crepe_desc">크레페 커미션</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://crepe.cm/ko/@JakobArtstation')"></i>
                 </a>
 
                 <a href="https://artmug.kr/index.php?channel=view&uid=58673" target="_blank" class="link-card">
@@ -241,7 +280,9 @@
                         <div class="link-title">ARTMUG</div>
                         <div class="link-desc" data-i18n="artmug_desc">아트머그 외주 & 커미션</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://artmug.kr/index.php?channel=view&uid=58673')"></i>
                 </a>
             </div>
         </section>
@@ -256,7 +297,9 @@
                         <div class="link-title">Discord Community</div>
                         <div class="link-desc" data-i18n="discord_desc">팬 커뮤니티 & 공지사항</div>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"
+                        title="Link Copy" 
+                        onclick="copyLink(event, 'https://discord.com/invite/RUmEzk287B')"></i>
                 </a>
             </div>
         </section>
@@ -298,7 +341,8 @@
                 artstation_desc: "포트폴리오 갤러리",
                 threads_desc: "스레드 일상 & 작업",
                 reddit_desc: "레딧 서브레딧",
-                copy_toast: "이메일 주소가 복사되었습니다!"
+                copy_toast: "이메일 주소가 복사되었습니다!",
+                link_copy_toast: "링크 주소가 복사되었습니다!"
             },
             en: {
                 bio: "Digital Illustrator & Character Designer<br>Live Streamer / Inquiries for Business & Commission",
@@ -323,7 +367,8 @@
                 artstation_desc: "Portfolio Gallery",
                 threads_desc: "Threads Daily & Works",
                 reddit_desc: "Reddit Community",
-                copy_toast: "Email address copied to clipboard!"
+                copy_toast: "Email address copied to clipboard!",
+                link_copy_toast: "Link URL copied to clipboard!"
             },
             ja: {
                 bio: "Digital Illustrator & Character Designer<br>ライブ配信 / お仕事・有償依頼のご相談",
@@ -348,7 +393,8 @@
                 artstation_desc: "ポートフォリオギャラリー",
                 threads_desc: "Threads 日常 & 制作",
                 reddit_desc: "Reddit コミュニティ",
-                copy_toast: "メールアドレスをコピーしました！"
+                copy_toast: "メールアドレスをコピーしました！",
+                link_copy_toast: "リンクアドレスをコピーしました！"
             },
             "zh-CN": {
                 bio: "Digital Illustrator & Character Designer<br>直播 / 约稿与商务合作请咨询",
@@ -373,7 +419,8 @@
                 artstation_desc: "作品集画廊",
                 threads_desc: "Threads 日常与创作",
                 reddit_desc: "Reddit 社区",
-                copy_toast: "邮箱地址已复制到剪贴板！"
+                copy_toast: "邮箱地址已复制到剪贴板！",
+                link_copy_toast: "链接地址已复制到剪贴板！"
             },
             "zh-TW": {
                 bio: "Digital Illustrator & Character Designer<br>實況直播 / 商業委託與有償約稿請洽詢",
@@ -398,7 +445,8 @@
                 artstation_desc: "作品集畫廊",
                 threads_desc: "Threads 日常與創作",
                 reddit_desc: "Reddit 社群",
-                copy_toast: "信箱地址已複製到剪貼簿！"
+                copy_toast: "信箱地址已複製到剪貼簿！",
+                link_copy_toast: "連結地址已複製到剪貼簿！"
             }
         };
 
@@ -437,6 +485,20 @@
                 showToast(toastMsg);
             }).catch(err => {
                 console.error('복사 실패:', err);
+            });
+        }
+
+        // 특정 링크 주소 복사 함수
+        function copyLink(event, url) {
+            // 화살표 클릭 시 카드의 href 링크 이동을 방지
+            event.preventDefault();
+            event.stopPropagation();
+        
+            navigator.clipboard.writeText(url).then(() => {
+                const toastMsg = translations[currentLang]?.link_copy_toast || "링크 주소가 복사되었습니다!";
+                showToast(toastMsg);
+            }).catch(err => {
+                console.error('Link Copy 실패:', err);
             });
         }
 

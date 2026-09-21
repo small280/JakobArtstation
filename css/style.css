@@ -309,11 +309,21 @@ body::before {
 
 .link-arrow {
     color: var(--text-sub);
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     opacity: 0.5;
-    transition: opacity 0.25s, transform 0.25s;
+    transition: opacity 0.25s, transform 0.25s, color 0.25s;
     margin-left: 8px;
     flex-shrink: 0;
+    padding: 6px; /* 클릭 영역 확보 */
+    border-radius: 6px;
+}
+
+/* 화살표 아이콘 자체에 마우스를 올렸을 때 강조 효과 */
+.link-arrow:hover {
+    opacity: 1 !important;
+    color: var(--accent-color) !important;
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.15);
 }
 
 .link-card:hover .link-arrow {
@@ -422,6 +432,16 @@ body::before {
     }
 }
 
+/* 눈 내리는 이펙트 Canvas */
+#snow-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* 클릭 이벤트가 아래 요소로 통과되도록 설정 */
+    z-index: 9999; /* 최상단 레이어 위치 */
+}
 
 /* Footer */
 footer {
