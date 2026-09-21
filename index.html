@@ -16,110 +16,451 @@
 <body>
 
     <div class="container">
+        <!-- 상단 컨트롤 영역 (다크모드 토글 & 언어 선택) -->
+        <div class="header-controls">
+            <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+                <!-- 기본은 달 모양 (Font Awesome 유지 가능) -->
+                <i class="fa-solid fa-moon"></i>
+            </button>
+
+            <div class="lang-selector-wrapper">
+                <select id="langSelect" class="lang-select">
+                    <option value="ko">🇰🇷 한국어</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                    <option value="zh-CN">🇨🇳 简体中文</option>
+                    <option value="zh-TW">🇹🇼 繁體中文</option>
+                </select>
+            </div>
+        </div>
+
         <!-- 프로필 헤더 -->
         <header class="profile-header">
             <div class="profile-avatar">
-                <!-- 아바타 이미지 주소를 넣으세요 -->
-                <img src="https://via.placeholder.com/150" alt="Profile Picture">
+                <img src="img/profile.png" alt="Profile Picture">
             </div>
-            <h1 class="profile-name">Jakob</h1>
-            <p class="profile-bio">Digital Illustrator & Game Artist<br>라이브 스트리밍 및 외주 / 커미션 문의</p>
+            <h1 class="profile-name">야콥Jakob</h1>
+
+            <!-- 이메일 영역 (클릭 시 복사) -->
+            <p class="profile-email" onclick="copyEmail('small280@naver.com')">
+                <i class="fa-regular fa-envelope"></i> 
+                <span>small280@naver.com</span>
+            </p>
+
+            <p class="profile-bio" data-i18n="bio">Digital Illustrator & Character Designer<br>라이브 스트리밍 및 외주 / 커미션 문의</p>
         </header>
+
+        <!-- SOCIAL MEDIA & GALLERY 섹션 -->
+        <section class="section">
+            <h2 class="section-title"><i class="fa-solid fa-share-nodes"></i> <span data-i18n="sec_sns">SNS & Gallery</span></h2>
+            <div class="grid-links">
+                <!-- X (Realism) -->
+                <a href="https://x.com/j_art_realistic" target="_blank" class="link-card">
+                    <div class="link-icon icon-twitter"><img src="img/icons/x.svg" alt="X" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">X (Realism)</div>
+                        <div class="link-desc" data-i18n="twitter_realism_desc">실사 & 반실사 일러스트</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <!-- X (Casual) -->
+                <a href="https://x.com/jakobartstation" target="_blank" class="link-card">
+                    <div class="link-icon icon-twitter"><img src="img/icons/x.svg" alt="X" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">X (Casual)</div>
+                        <div class="link-desc" data-i18n="twitter_casual_desc">캐주얼 & 서브컬쳐 일러스트</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/jakobartstation/" target="_blank" class="link-card">
+                    <div class="link-icon icon-instagram"><img src="img/icons/instagram.svg" alt="Instagram" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">Instagram</div>
+                        <div class="link-desc" data-i18n="instagram_desc">갤러리 & 피드</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <!-- Pixiv -->
+                <a href="https://www.pixiv.net/users/120488892" target="_blank" class="link-card">
+                    <div class="link-icon icon-pixiv"><img src="img/icons/pixiv.svg" alt="Pixiv" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">Pixiv</div>
+                        <div class="link-desc" data-i18n="pixiv_desc">픽시브 작품 모음</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <!-- Cara -->
+                <a href="https://cara.app/jakobartstation" target="_blank" class="link-card">
+                    <div class="link-icon icon-cara"><img src="img/icons/cara.svg" alt="Cara" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">Cara</div>
+                        <div class="link-desc" data-i18n="cara_desc">아티스트 포트폴리오</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <!-- Bluesky -->
+                <a href="https://bsky.app/profile/jakobartstation.bsky.social" target="_blank" class="link-card">
+                    <div class="link-icon icon-bluesky"><img src="img/icons/bluesky.svg" alt="Bluesky" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">Bluesky</div>
+                        <div class="link-desc" data-i18n="bluesky_desc">블루스카이 채널</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <!-- ArtStation -->
+                <a href="https://www.artstation.com/jakobartstation" target="_blank" class="link-card">
+                    <div class="link-icon icon-artstation"><img src="img/icons/artstation.svg" alt="ArtStation" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">ArtStation</div>
+                        <div class="link-desc" data-i18n="artstation_desc">포트폴리오 갤러리</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <!-- Threads -->
+                <a href="https://www.threads.com/@jakobartstation" target="_blank" class="link-card">
+                    <div class="link-icon icon-threads"><img src="img/icons/threads.svg" alt="Threads" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">Threads</div>
+                        <div class="link-desc" data-i18n="threads_desc">스레드 일상 & 작업</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <!-- Reddit -->
+                <a href="https://www.reddit.com/user/JakobArtstation/" target="_blank" class="link-card">
+                    <div class="link-icon icon-reddit"><img src="img/icons/reddit.svg" alt="Reddit" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">Reddit</div>
+                        <div class="link-desc" data-i18n="reddit_desc">레딧 커뮤니티</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+            </div>
+        </section>
 
         <!-- LIVE STREAMING 섹션 -->
         <section class="section">
-            <h2 class="section-title"><i class="fa-solid fa-headset"></i> Live Streaming</h2>
+            <h2 class="section-title"><i class="fa-solid fa-headset"></i> <span data-i18n="sec_live">Live Streaming</span></h2>
             <div class="grid-links">
-                <a href="https://chzzk.naver.com/" target="_blank" class="link-card">
-                    <div class="link-icon icon-chzzk"><i class="fa-solid fa-play"></i></div>
-                    <div class="link-info">
-                        <div class="link-title">Chzzk</div>
-                        <div class="link-desc">치지직 생방송 채널</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right link-arrow"></i>
-                </a>
-
-                <a href="https://youtube.com/" target="_blank" class="link-card">
-                    <div class="link-icon icon-youtube"><i class="fa-brands fa-youtube"></i></div>
+                <a href="https://www.youtube.com/@JakobArtstation" target="_blank" class="link-card">
+                    <div class="link-icon icon-youtube"><img src="img/icons/youtube.svg" alt="YouTube" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">YouTube</div>
-                        <div class="link-desc">다시보기 & 작업 영상</div>
+                        <div class="link-desc" data-i18n="youtube_desc">라이브 & 다시보기</div>
                     </div>
-                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
                 </a>
 
-                <a href="https://twitch.tv/" target="_blank" class="link-card">
-                    <div class="link-icon icon-twitch"><i class="fa-brands fa-twitch"></i></div>
+                <!-- 치지직 (필요 시 LIVE 뱃지 사용: <span class="live-badge">LIVE</span>) -->
+                <a href="https://chzzk.naver.com/66dfdbc6dc43a83a1691ba6ad3562d8f" target="_blank" class="link-card">
+                    <div class="link-icon icon-chzzk"><img src="img/icons/chzzk.svg" alt="Chzzk" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">Chzzk</div>
+                        <div class="link-desc" data-i18n="chzzk_desc">치지직 생방송 채널</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <a href="https://www.twitch.tv/jakobartstation" target="_blank" class="link-card">
+                    <div class="link-icon icon-twitch"><img src="img/icons/twitch.svg" alt="Twitch" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Twitch</div>
-                        <div class="link-desc">트위치 방송국</div>
+                        <div class="link-desc" data-i18n="twitch_desc">트위치 생방송 채널</div>
                     </div>
-                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
                 </a>
             </div>
         </section>
 
         <!-- COMMISSIONS & CONTACT 섹션 -->
         <section class="section">
-            <h2 class="section-title"><i class="fa-solid fa-palette"></i> Commissions & Contact</h2>
+            <h2 class="section-title"><i class="fa-solid fa-palette"></i> <span data-i18n="sec_comm">Commissions & Contact</span></h2>
             <div class="grid-links">
-                <a href="#" target="_blank" class="link-card">
-                    <div class="link-icon"><i class="fa-solid fa-file-pen"></i></div>
+                <a href="https://vgen.co/JakobArtstation" target="_blank" class="link-card">
+                    <div class="link-icon icon-vgen"><img src="img/icons/vgen.svg" alt="VGen" class="custom-icon-img"></div>
                     <div class="link-info">
-                        <div class="link-title">Commission Info</div>
-                        <div class="link-desc">커미션 안내 및 신청</div>
+                        <div class="link-title">VGen</div>
+                        <div class="link-desc" data-i18n="vgen_desc">Global Commission (VGen)</div>
                     </div>
-                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
                 </a>
 
-                <a href="https://discord.gg/" target="_blank" class="link-card">
-                    <div class="link-icon icon-discord"><i class="fa-brands fa-discord"></i></div>
+                <a href="https://www.pixiv.net/request/plans/199712" target="_blank" class="link-card">
+                    <div class="link-icon icon-pixiv"><img src="img/icons/pixiv.svg" alt="Pixiv" class="custom-icon-img"></div>
                     <div class="link-info">
-                        <div class="link-title">Discord Community</div>
-                        <div class="link-desc">팬 커뮤니티 & 공지사항</div>
+                        <div class="link-title">Pixiv Request</div>
+                        <div class="link-desc" data-i18n="pixiv_req_desc">Pixiv 리퀘스트</div>
                     </div>
-                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <a href="https://crepe.cm/ko/@JakobArtstation" target="_blank" class="link-card">
+                    <div class="link-icon icon-crepe"><img src="img/icons/crepe.svg" alt="crepe" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">Crepe</div>
+                        <div class="link-desc" data-i18n="crepe_desc">크레페 커미션</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
+                </a>
+
+                <a href="https://artmug.kr/index.php?channel=view&uid=58673" target="_blank" class="link-card">
+                    <div class="link-icon icon-artmug"><img src="img/icons/artmug.svg" alt="ARTMUG" class="custom-icon-img"></div>
+                    <div class="link-info">
+                        <div class="link-title">ARTMUG</div>
+                        <div class="link-desc" data-i18n="artmug_desc">아트머그 외주 & 커미션</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
                 </a>
             </div>
         </section>
 
-        <!-- SOCIAL MEDIA & GALLERY 섹션 -->
+        <!-- COMMUNITY 섹션 -->
         <section class="section">
-            <h2 class="section-title"><i class="fa-solid fa-share-nodes"></i> SNS & Gallery</h2>
+            <h2 class="section-title"><i class="fa-solid fa-users"></i> <span data-i18n="sec_community">Community</span></h2>
             <div class="grid-links">
-                <a href="https://twitter.com/" target="_blank" class="link-card">
-                    <div class="link-icon icon-twitter"><i class="fa-brands fa-x-twitter"></i></div>
+                <a href="https://discord.com/invite/RUmEzk287B" target="_blank" class="link-card">
+                    <div class="link-icon icon-discord"><img src="img/icons/discord.svg" alt="Discord" class="custom-icon-img"></div>
                     <div class="link-info">
-                        <div class="link-title">X (Twitter)</div>
-                        <div class="link-desc">일러스트 & 신규 소식</div>
+                        <div class="link-title">Discord Community</div>
+                        <div class="link-desc" data-i18n="discord_desc">팬 커뮤니티 & 공지사항</div>
                     </div>
-                    <i class="fa-solid fa-chevron-right link-arrow"></i>
-                </a>
-
-                <a href="https://artstation.com/" target="_blank" class="link-card">
-                    <div class="link-icon icon-artstation"><i class="fa-brands fa-artstation"></i></div>
-                    <div class="link-info">
-                        <div class="link-title">ArtStation</div>
-                        <div class="link-desc">포트폴리오 갤러리</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right link-arrow"></i>
-                </a>
-
-                <a href="https://pixiv.net/" target="_blank" class="link-card">
-                    <div class="link-icon icon-pixiv"><i class="fa-solid fa-p"></i></div>
-                    <div class="link-info">
-                        <div class="link-title">Pixiv</div>
-                        <div class="link-desc">픽시브 작품 모음</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right link-arrow"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square link-arrow"></i>
                 </a>
             </div>
         </section>
 
         <footer>
-            © 2026 Jakob. All rights reserved.
+            © 2026 JakobArtstation. All rights reserved.
         </footer>
     </div>
 
+    <!-- 토스트 알림 팝업 -->
+    <div id="toast" class="toast">복사되었습니다!</div>
+
+    <!-- 자바스크립트 -->
+    <script>
+        const translations = {
+            ko: {
+                bio: "Digital Illustrator & Character Designer<br>라이브 스트리밍 및 외주 / 커미션 문의",
+                sec_live: "Live Streaming",
+                chzzk_desc: "치지직 생방송 채널",
+                youtube_desc: "라이브 & 다시보기",
+                twitch_desc: "트위치 생방송 채널",
+                sec_comm: "Commissions & Contact",
+                crepe_desc: "크레페 커미션 신청",
+                artmug_desc: "아트머그 외주 & 커미션",
+                vgen_desc: "VGen 글로벌 커미션",
+                pixiv_req_desc: "픽시브 리퀘스트",
+                sec_community: "Community",
+                discord_desc: "팬 커뮤니티 & 공지사항",
+                sec_sns: "SNS & Gallery",
+                twitter_realism_desc: "실사 & 반실사 일러스트",
+                twitter_casual_desc: "캐주얼 & 서브컬쳐 일러스트",
+                instagram_desc: "갤러리 & 피드",
+                pixiv_desc: "픽시브 작품 모음",
+                cara_desc: "아티스트 포트폴리오",
+                bluesky_desc: "블루스카이 채널",
+                artstation_desc: "포트폴리오 갤러리",
+                threads_desc: "스레드 일상 & 작업",
+                reddit_desc: "레딧 서브레딧",
+                copy_toast: "이메일 주소가 복사되었습니다!"
+            },
+            en: {
+                bio: "Digital Illustrator & Character Designer<br>Live Streamer / Inquiries for Business & Commission",
+                sec_live: "Live Streaming",
+                chzzk_desc: "Chzzk Live Stream Channel",
+                youtube_desc: "Live & VODs",
+                twitch_desc: "Twitch Live Stream Channel",
+                sec_comm: "Commissions & Contact",
+                crepe_desc: "crepe Commission",
+                artmug_desc: "ARTMUG Commission & Business",
+                vgen_desc: "VGen Global Commission",
+                pixiv_req_desc: "Pixiv Request",
+                sec_community: "Community",
+                discord_desc: "Fan Community & Announcements",
+                sec_sns: "SNS & Gallery",
+                twitter_realism_desc: "Realism & Semi-Realism Art",
+                twitter_casual_desc: "Casual & Subculture Art",
+                instagram_desc: "Gallery & Feed",
+                pixiv_desc: "Pixiv Artworks",
+                cara_desc: "Artist Portfolio",
+                bluesky_desc: "Bluesky Channel",
+                artstation_desc: "Portfolio Gallery",
+                threads_desc: "Threads Daily & Works",
+                reddit_desc: "Reddit Community",
+                copy_toast: "Email address copied to clipboard!"
+            },
+            ja: {
+                bio: "Digital Illustrator & Character Designer<br>ライブ配信 / お仕事・有償依頼のご相談",
+                sec_live: "Live Streaming",
+                chzzk_desc: "Chzzk 配信チャンネル",
+                youtube_desc: "ライブ & アーカイブ",
+                twitch_desc: "Twitch 配信チャンネル",
+                sec_comm: "Commissions & Contact",
+                crepe_desc: "crepe 有償依頼",
+                artmug_desc: "ARTMUG 有償依頼・お仕事",
+                vgen_desc: "VGen グローバルコミッション",
+                pixiv_req_desc: "Pixiv リクエスト",
+                sec_community: "Community",
+                discord_desc: "ファンコミュニティ & お知らせ",
+                sec_sns: "SNS & Gallery",
+                twitter_realism_desc: "リアル & 半リアル イラスト",
+                twitter_casual_desc: "カジュアル & サブカル イラスト",
+                instagram_desc: "ギャラリー & 投稿",
+                pixiv_desc: "Pixiv 作品集",
+                cara_desc: "ポートフォリオ",
+                bluesky_desc: "Bluesky チャンネル",
+                artstation_desc: "ポートフォリオギャラリー",
+                threads_desc: "Threads 日常 & 制作",
+                reddit_desc: "Reddit コミュニティ",
+                copy_toast: "メールアドレスをコピーしました！"
+            },
+            "zh-CN": {
+                bio: "Digital Illustrator & Character Designer<br>直播 / 约稿与商务合作请咨询",
+                sec_live: "Live Streaming",
+                chzzk_desc: "Chzzk 直播频道",
+                youtube_desc: "直播与录播",
+                twitch_desc: "Twitch 直播频道",
+                sec_comm: "Commissions & Contact",
+                crepe_desc: "crepe 约稿",
+                artmug_desc: "ARTMUG 约稿与商务",
+                vgen_desc: "VGen 全球约稿",
+                pixiv_req_desc: "Pixiv Request 约稿",
+                sec_community: "Community",
+                discord_desc: "粉丝社区与公告",
+                sec_sns: "SNS & Gallery",
+                twitter_realism_desc: "写实 & 半写实插画",
+                twitter_casual_desc: "日系 & 二次元插画",
+                instagram_desc: "画廊与动态",
+                pixiv_desc: "Pixiv 作品集",
+                cara_desc: "艺术家作品集",
+                bluesky_desc: "Bluesky 频道",
+                artstation_desc: "作品集画廊",
+                threads_desc: "Threads 日常与创作",
+                reddit_desc: "Reddit 社区",
+                copy_toast: "邮箱地址已复制到剪贴板！"
+            },
+            "zh-TW": {
+                bio: "Digital Illustrator & Character Designer<br>實況直播 / 商業委託與有償約稿請洽詢",
+                sec_live: "Live Streaming",
+                chzzk_desc: "Chzzk 直播頻道",
+                youtube_desc: "直播與重播",
+                twitch_desc: "Twitch 直播頻道",
+                sec_comm: "Commissions & Contact",
+                crepe_desc: "crepe 委託",
+                artmug_desc: "ARTMUG 委託與商業合作",
+                vgen_desc: "VGen 全球委託",
+                pixiv_req_desc: "Pixiv Request 委託",
+                sec_community: "Community",
+                discord_desc: "粉絲社群與公告",
+                sec_sns: "SNS & Gallery",
+                twitter_realism_desc: "寫實 & 半寫實插畫",
+                twitter_casual_desc: "日系 & 二次元插畫",
+                instagram_desc: "畫廊與日常",
+                pixiv_desc: "Pixiv 作品集",
+                cara_desc: "藝術家作品集",
+                bluesky_desc: "Bluesky 頻道",
+                artstation_desc: "作品集畫廊",
+                threads_desc: "Threads 日常與創作",
+                reddit_desc: "Reddit 社群",
+                copy_toast: "信箱地址已複製到剪貼簿！"
+            }
+        };
+
+        const langSelect = document.getElementById('langSelect');
+        let currentLang = 'ko';
+
+        // 언어 변경 함수
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const keys = translations[lang];
+            if (!keys) return;
+
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (keys[key]) {
+                    element.innerHTML = keys[key];
+                }
+            });
+
+            localStorage.setItem('preferred_lang', lang);
+        }
+
+        langSelect.addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
+        });
+
+        // 페이지 초기 언어 설정
+        const savedLang = localStorage.getItem('preferred_lang') || 'ko';
+        langSelect.value = savedLang;
+        changeLanguage(savedLang);
+
+        // 클립보드 복사 기능
+        function copyEmail(emailText) {
+            navigator.clipboard.writeText(emailText).then(() => {
+                const toastMsg = translations[currentLang]?.copy_toast || "복사되었습니다!";
+                showToast(toastMsg);
+            }).catch(err => {
+                console.error('복사 실패:', err);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("show");
+            
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2000);
+        }
+
+        const themeToggleBtn = document.getElementById("theme-toggle");
+            
+        // Lucide Icons의 해(Sun) SVG 코드
+        const sunIconSVG = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2"></path>
+          <path d="M12 20v2"></path>
+          <path d="m4.93 4.93 1.41 1.41"></path>
+          <path d="m17.66 17.66 1.41 1.41"></path>
+          <path d="M2 12h2"></path>
+          <path d="M20 12h2"></path>
+          <path d="m6.34 17.66-1.41 1.41"></path>
+          <path d="m19.07 4.93-1.41 1.41"></path>
+        </svg>
+        `;
+        
+        // Font Awesome의 달(Moon) Icon 코드
+        const moonIconHTML = `<i class="fa-solid fa-moon"></i>`;
+        
+        // 버튼 클릭 이벤트
+        themeToggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("light-mode");
+            
+            if (document.body.classList.contains("light-mode")) {
+                themeToggleBtn.innerHTML = sunIconSVG; // 라이트 모드일 때 Lucide 해 아이콘
+                localStorage.setItem("theme", "light");
+            } else {
+                themeToggleBtn.innerHTML = moonIconHTML; // 다크 모드일 때 기존 달 아이콘
+                localStorage.setItem("theme", "dark");
+            }
+        });
+        
+        // 페이지 첫 로드 시 저장된 테마 불러오기
+        if (localStorage.getItem("theme") === "light") {
+            document.body.classList.add("light-mode");
+            themeToggleBtn.innerHTML = sunIconSVG;
+        }
+    </script>
 </body>
 </html>
