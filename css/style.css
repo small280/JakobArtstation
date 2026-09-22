@@ -385,6 +385,7 @@ body.light .lang-select option {
     /* 기본(OFF) 상태: 회색 톤 */
     background-color: rgba(50, 50, 50, 0.12);
     color: #999999;
+    opacity: 0.4;
     border: 1px solid var(--border-color);
     font-size: 0.72rem;
     font-weight: 700;
@@ -402,7 +403,7 @@ body.light .lang-select option {
     /* 기본(OFF) 상태: 어두운 회색 점 */
     background-color: #999999;
     border-radius: 50%;
-    opacity: 0.9;
+    opacity: 0.4;
 }
 
 /* 방송 중(ON)일 때 적용될 클래스 (.active) */
