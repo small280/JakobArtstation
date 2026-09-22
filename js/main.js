@@ -33,7 +33,11 @@ function toggleLiveBadge(cardId, isLive) {
 
     const badge = card.querySelector('.live-status');
     if (badge) {
-        badge.style.display = isLive ? 'inline-flex' : 'none';
+        if (isLive) {
+            badge.classList.add('active'); // 방송 중: 초록색 불 & 깜빡임
+        } else {
+            badge.classList.remove('active'); // 방송 아님: 회색 꺼진 상태 유지
+        }
     }
 }
 
