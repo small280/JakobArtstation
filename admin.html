@@ -22,10 +22,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // 👇 아래 Supabase 연결 초기화 코드를 추가해주세요 (본인의 프로젝트 URL과 Key 입력)
+        // 👇 전역으로 등록된 supabase 객체(createClient)를 직접 사용합니다.
         const SUPABASE_URL = 'https://mojcgizzrwsatgsvboib.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_vXeVkey0aLcuVxeLws219A_YPEz_Ze6';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // window.supabase 가 아니라 바로 supabase.createClient 로 호출합니다.
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function handlePlatformClick(event, platformId, targetUrl) {
             event.preventDefault(); // 기본 이동 일시 정지
