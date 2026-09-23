@@ -22,10 +22,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // 👇 아래 Supabase 연결 초기화 코드를 추가해주세요 (본인의 프로젝트 URL과 Key 입력)
+        const SUPABASE_URL = 'https://mojcgizzrwsatgsvboib.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_vXeVkey0aLcuVxeLws219A_YPEz_Ze6';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         async function handlePlatformClick(event, platformId, targetUrl) {
             event.preventDefault(); // 기본 이동 일시 정지
                 
-            // Supabase RPC 함수 호출하여 조회수 증가 (상단에서 선언된 supabase 사용)
+            // Supabase RPC 함수 호출하여 조회수 증가
             const { error } = await supabase.rpc('increment_view', { row_id: platformId });
             if (error) {
                 console.error('조회수 증가 오류:', error);
