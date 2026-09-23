@@ -90,7 +90,7 @@ function initWeatherSystem() {
 
     // 초기 입자 배열
     let snowParticles = targetMode === 'snow' 
-        ? Array.from({ length: 40 }, () => createSnowflake(false)) 
+        ? Array.from({ length: 80 }, () => createSnowflake(false)) 
         : [];
 
     let rainDrops = targetMode === 'rain' 
