@@ -426,3 +426,72 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// // ==========================================
+// // 5. 방문자 조회
+// // ==========================================
+
+// // 1. 페이지 방문 시 조회수 증가 및 가져오기
+// async function trackPageView() {
+//     try {
+//         // 'mysite-portfolio'는 본인만의 고유한 이름(namespace)으로 변경하세요.
+//         const response = await fetch('https://api.countapi.xyz/hit/mysite-portfolio/visits');
+//         const data = await response.json();
+//         console.log(`총 방문자 수: ${data.value}`);
+//     } catch (err) {
+//         console.log("방문자 집계 에러:", err);
+//     }
+// }
+
+// // 2. SNS 링크 클릭 시 클릭 수 증가 및 가져오기
+// async function trackLinkClick(title) {
+//     try {
+//         // 공백이나 특수문자가 들어가면 에러가 날 수 있으니 영문 키로 변환 (예: youtube, chzzk 등)
+//         const key = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        
+//         const response = await fetch(`https://api.countapi.xyz/hit/mysite-portfolio/click_${key}`);
+//         const data = await response.json();
+//         console.log(`${title} 클릭 수: ${data.value}`);
+//     } catch (err) {
+//         console.log("클릭 집계 에러:", err);
+//     }
+// }
+
+// // 페이지 로드 시 실행
+// document.addEventListener('DOMContentLoaded', () => {
+//     trackPageView();
+
+//     // 기존 링크 클릭 이벤트에 연결
+//     const linkCards = document.querySelectorAll('.link-card');
+//     linkCards.forEach(card => {
+//         card.addEventListener('click', () => {
+//             const title = card.querySelector('.link-title')?.textContent || 'Unknown';
+//             trackLinkClick(title);
+//         });
+//     });
+// });
+
+// main_6.js 하단에 추가
+let isAnimationPaused = false;
+
+window.pauseWeatherAnimation = function() {
+    isAnimationPaused = true;
+    if (currentAnimationId) {
+        cancelAnimationFrame(currentAnimationId);
+        currentAnimationId = null;
+    }
+};
+
+window.resumeWeatherAnimation = function() {
+    if (isAnimationPaused) {
+        isAnimationPaused = false;
+        // 캔버스 루프 재시작을 위해 initWeatherSystem 내부의 렌더 함수 우회 실행
+        const canvas = document.getElementById('snow-canvas');
+        if (canvas && typeof initWeatherSystem === 'function') {
+            // 이미 실행 중이 아니라면 다시 구동
+            if (!currentAnimationId) {
+                initWeatherSystem();
+            }
+        }
+    }
+};

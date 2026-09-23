@@ -1,0 +1,358 @@
+/* ==========================================
+   어드민 대시보드 전용 스타일
+   ========================================== */
+
+.admin-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.admin-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.back-home-btn {
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+}
+
+.back-home-btn:hover {
+    background-color: var(--card-hover-bg);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+/* 대시보드 그리드 레이아웃 (좌측 메인 요약 / 우측 상세 SNS 요약) */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 카드 공통 스타일 */
+.admin-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* 좌측: 전체 통합 조회수 카드 스타일 */
+.total-views-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 280px;
+}
+
+.main-today-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.main-today-label i {
+    color: var(--accent-color);
+}
+
+.main-today-value {
+    font-size: 3.8rem;
+    font-weight: 700;
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.total-views-divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--border-color);
+    margin-bottom: 16px;
+}
+
+.sub-total-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: var(--text-sub);
+}
+
+.sub-total-wrapper strong {
+    color: var(--text-main);
+    font-size: 1.1rem;
+}
+/* ==========================================
+   우측: SNS별 조회수 리스트 카드 & 테이블 헤더
+   ========================================== */
+.sns-stats-top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.sns-stats-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+.sns-stats-title i {
+    color: var(--accent-color);
+}
+
+/* 정렬 버튼 & 드롭다운 스타일 */
+.sort-dropdown-wrapper {
+    position: relative;
+}
+
+.sort-btn {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.sort-btn:hover {
+    background-color: var(--card-hover-bg);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+/* 기본(다크 모드 기준) 정렬 메뉴 배경 및 테두리 */
+.sort-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    
+    /* 투명도를 줄이고 어두운 단색 배경에 가깝게 설정 (alpha값 0.95~1.0) */
+    background-color: rgba(22, 22, 28, 0.98); 
+    border: 1px solid var(--border-color);
+    
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    width: 140px;
+    display: none;
+    flex-direction: column;
+    z-index: 10;
+    overflow: hidden;
+}
+
+/* 다크 모드 텍스트 색상 확실히 잡아주기 */
+.sort-menu-item {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #e5e7eb; /* 다크 모드에서 밝은 텍스트 */
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+}
+
+.sort-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #7c5cff;
+}
+
+/* 라이트 모드(`body.light`)일 때는 깔끔한 흰색 배경 유지 */
+body.light .sort-menu {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+body.light .sort-menu-item {
+    color: #1f2937; /* 라이트 모드에서 진한 텍스트 */
+}
+
+body.light .sort-menu-item:hover {
+    background-color: #f3f4f6;
+    color: #7c5cff;
+}
+
+.sort-menu.active {
+    display: flex;
+}
+
+.sort-menu-item {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+}
+
+.sort-menu-item:hover {
+    background-color: var(--card-hover-bg);
+    color: var(--accent-color);
+}
+
+/* 테이블 헤더 (플랫폼 | Today | Total) 스타일 */
+.sns-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px 10px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 8px;
+}
+
+.sns-header-right {
+    display: flex;
+    gap: 36px;
+    text-align: right;
+    padding-right: 4px;
+}
+
+/* 리스트 컨테이너 (스크롤바 적용으로 너무 길어지지 않게 조절) */
+.sns-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* 커스텀 스크롤바 */
+.sns-list::-webkit-scrollbar {
+    width: 5px;
+}
+.sns-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.sns-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    padding: 10px 16px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+body.light .sns-item {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.sns-item:hover {
+    background: var(--card-hover-bg);
+    border-color: rgba(124, 92, 255, 0.3);
+}
+
+.sns-info-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sns-icon-box {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+}
+
+.sns-icon-box img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.sns-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.sns-counts-right {
+    display: flex;
+    gap: 28px;
+    text-align: right;
+}
+
+.count-num {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    width: 48px;
+    text-align: right;
+}
+
+.count-num.today {
+    color: #7c5cff;
+}

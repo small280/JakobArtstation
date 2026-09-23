@@ -107,6 +107,47 @@ body {
 .container {
     width: 100%;
     max-width: 1400px;
+    position: relative; /* 좌측 상단 절대 위치 기준점 설정 */
+}
+
+/* ==========================================
+   관리자 로그인 버튼 (좌측 상단 고정)
+   ========================================== */
+#admin-login-btn {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important; /* 다른 상단 버튼들과 형태 통일 (원할 경우 50%로 변경 가능) */
+    cursor: pointer !important;
+    z-index: 9999 !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease !important;
+}
+
+#admin-login-btn i {
+    color: inherit !important;
+    font-size: 1rem !important;
+}
+
+#admin-login-btn:hover {
+    background-color: var(--card-hover-bg) !important;
+    border-color: var(--accent-color) !important;
+    color: var(--accent-color) !important;
+}
+
+#admin-login-btn:hover i {
+    color: var(--accent-color) !important;
+    transform: scale(1.1) !important;
 }
 
 /* ==========================================
@@ -443,7 +484,7 @@ body.light .lang-select option {
     border-radius: 8px;
     padding: 12px 20px;
     position: fixed;
-    z-index: 1000;
+    z-index: 20000; /* 모달(10000)보다 높게 설정하여 뒤에 가려지지 않고 선명하게 표시 */
     left: 50%;
     bottom: 30px;
     transform: translateX(-50%);
@@ -460,6 +501,11 @@ body.light .lang-select option {
     bottom: 40px;
 }
 
+/* 비밀번호 오류 시 적용할 빨간색 토스트 스타일 */
+.toast.error {
+    background-color: #ef4444 !important; 
+}
+
 /* ==========================================
    8. Effects & Footer
    ========================================== */
@@ -472,6 +518,8 @@ body.light .lang-select option {
     pointer-events: none;
     z-index: 9999;
 }
+
+
 
 footer {
     margin-top: auto;

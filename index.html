@@ -9,16 +9,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="img/icons/favicon.png">
     
     <!-- External CSS File -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin-modal.css">
 
     <!-- 기본 파비콘 설정 -->
     <link rel="icon" type="image/png" sizes="32x32" href="../img/icons/favicon.png">
     
     <!-- 구형 브라우저(.ico 형식) 호환용 -->
     <link rel="shortcut icon" href="../img/icons/favicon.ico" type="image/x-icon">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Google Analytics (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -44,8 +46,16 @@
     <div class="bg-layer bg-light-none"></div>
 
     <div class="container">
+
+        <!-- 좌측 상단 관리자 로그인 버튼 추가 -->
+        <a href="#" id="admin-login-btn" class="theme-btn" aria-label="Admin Login" title="관리자 로그인" onclick="checkAdminPassword(event)">
+            <i class="fa-solid fa-lock"></i>
+        </a>
+
         <!-- 상단 컨트롤 영역 (다크모드 토글 & 언어 선택) -->
         <div class="header-controls">
+    
+
             <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
                 <!-- 기본은 달 모양 (Font Awesome 유지 가능) -->
                 <i class="fa-solid fa-moon"></i>
@@ -88,7 +98,7 @@
             <h2 class="section-title"><i class="fa-solid fa-share-nodes"></i> <span data-i18n="sec_sns">SNS & Gallery</span></h2>
             <div class="grid-links">
                 <!-- X (Realism) -->
-                <a href="https://x.com/j_art_realistic" target="_blank" class="link-card">
+                <a href="https://x.com/j_art_realistic" onclick="handlePlatformClick(event, 'x_realism', 'https://x.com/j_art_realistic')" target="_blank" class="link-card">
                     <div class="link-icon icon-twitter"><img src="img/icons/x.svg" alt="X" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">X (Realism)</div>
@@ -100,7 +110,7 @@
                 </a>
 
                 <!-- X (Casual) -->
-                <a href="https://x.com/jakobartstation" target="_blank" class="link-card">
+                <a href="https://x.com/jakobartstation" onclick="handlePlatformClick(event, 'x_casual', 'https://x.com/jakobartstation')" target="_blank" class="link-card">
                     <div class="link-icon icon-twitter"><img src="img/icons/x.svg" alt="X" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">X (Casual)</div>
@@ -112,7 +122,7 @@
                 </a>
 
                 <!-- Instagram -->
-                <a href="https://www.instagram.com/jakobartstation/" target="_blank" class="link-card">
+                <a href="https://www.instagram.com/jakobartstation/" onclick="handlePlatformClick(event, 'instagram', 'https://www.instagram.com/jakobartstation/')" target="_blank" class="link-card">
                     <div class="link-icon icon-instagram"><img src="img/icons/instagram.svg" alt="Instagram" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Instagram</div>
@@ -124,7 +134,7 @@
                 </a>
 
                 <!-- Pixiv -->
-                <a href="https://www.pixiv.net/users/120488892" target="_blank" class="link-card">
+                <a href="https://www.pixiv.net/users/120488892" onclick="handlePlatformClick(event, 'pixiv', 'https://www.pixiv.net/users/120488892')" target="_blank" class="link-card">
                     <div class="link-icon icon-pixiv"><img src="img/icons/pixiv.svg" alt="Pixiv" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Pixiv</div>
@@ -136,7 +146,7 @@
                 </a>
 
                 <!-- Cara -->
-                <a href="https://cara.app/jakobartstation" target="_blank" class="link-card">
+                <a href="https://cara.app/jakobartstation" onclick="handlePlatformClick(event, 'cara', 'https://cara.app/jakobartstation')" target="_blank" class="link-card">
                     <div class="link-icon icon-cara"><img src="img/icons/cara.svg" alt="Cara" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Cara</div>
@@ -148,7 +158,7 @@
                 </a>
 
                 <!-- Bluesky -->
-                <a href="https://bsky.app/profile/jakobartstation.bsky.social" target="_blank" class="link-card">
+                <a href="https://bsky.app/profile/jakobartstation.bsky.social" onclick="handlePlatformClick(event, 'bluesky', 'https://bsky.app/profile/jakobartstation.bsky.social')" target="_blank" class="link-card">
                     <div class="link-icon icon-bluesky"><img src="img/icons/bluesky.svg" alt="Bluesky" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Bluesky</div>
@@ -160,7 +170,7 @@
                 </a>
 
                 <!-- ArtStation -->
-                <a href="https://www.artstation.com/jakobartstation" target="_blank" class="link-card">
+                <a href="https://www.artstation.com/jakobartstation" onclick="handlePlatformClick(event, 'artstation', 'https://www.artstation.com/jakobartstation')" target="_blank" class="link-card">
                     <div class="link-icon icon-artstation"><img src="img/icons/artstation.svg" alt="ArtStation" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">ArtStation</div>
@@ -172,7 +182,7 @@
                 </a>
 
                 <!-- Threads -->
-                <a href="https://www.threads.com/@jakobartstation" target="_blank" class="link-card">
+                <a href="https://www.threads.com/@jakobartstation" onclick="handlePlatformClick(event, 'threads', 'https://www.threads.com/@jakobartstation')" target="_blank" class="link-card">
                     <div class="link-icon icon-threads"><img src="img/icons/threads.svg" alt="Threads" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Threads</div>
@@ -184,7 +194,7 @@
                 </a>
 
                 <!-- Reddit -->
-                <a href="https://www.reddit.com/user/JakobArtstation/" target="_blank" class="link-card">
+                <a href="https://www.reddit.com/user/JakobArtstation/" onclick="handlePlatformClick(event, 'reddit', 'https://www.reddit.com/user/JakobArtstation/')" target="_blank" class="link-card">
                     <div class="link-icon icon-reddit"><img src="img/icons/reddit.svg" alt="Reddit" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Reddit</div>
@@ -202,7 +212,7 @@
             <h2 class="section-title"><i class="fa-solid fa-headset"></i> <span data-i18n="sec_live">Live Streaming</span></h2>
             <div class="grid-links">
                 <!-- YouTube 카드 -->
-                <a href="https://www.youtube.com/@JakobArtstation" id="card-youtube" target="_blank" class="link-card">
+                <a href="https://www.youtube.com/@JakobArtstation" onclick="handlePlatformClick(event, 'youtube', 'https://www.youtube.com/@JakobArtstation')" id="card-youtube" target="_blank" class="link-card">
                     <div class="link-icon icon-youtube"><img src="img/icons/youtube.svg" alt="YouTube" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">YouTube</div>
@@ -219,7 +229,7 @@
                 </a>
             
                 <!-- 치지직 카드 -->
-                <a href="https://chzzk.naver.com/66dfdbc6dc43a83a1691ba6ad3562d8f" id="card-chzzk" target="_blank" class="link-card">
+                <a href="https://chzzk.naver.com/66dfdbc6dc43a83a1691ba6ad3562d8f" onclick="handlePlatformClick(event, 'chzzk', 'https://chzzk.naver.com/66dfdbc6dc43a83a1691ba6ad3562d8f')" id="card-chzzk" target="_blank" class="link-card">
                     <div class="link-icon icon-chzzk"><img src="img/icons/chzzk.svg" alt="Chzzk" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Chzzk</div>
@@ -235,7 +245,7 @@
                 </a>
             
                 <!-- Twitch 카드 -->
-                <a href="https://www.twitch.tv/jakobartstation" id="card-twitch" target="_blank" class="link-card">
+                <a href="https://www.twitch.tv/jakobartstation" onclick="handlePlatformClick(event, 'twitch', 'https://www.twitch.tv/jakobartstation')" id="card-twitch" target="_blank" class="link-card">
                     <div class="link-icon icon-twitch"><img src="img/icons/twitch.svg" alt="Twitch" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Twitch</div>
@@ -256,7 +266,7 @@
         <section class="section">
             <h2 class="section-title"><i class="fa-solid fa-palette"></i> <span data-i18n="sec_comm">Commissions & Contact</span></h2>
             <div class="grid-links">
-                <a href="https://vgen.co/JakobArtstation" target="_blank" class="link-card">
+                <a href="https://vgen.co/JakobArtstation" onclick="handlePlatformClick(event, 'vgen', 'https://vgen.co/JakobArtstation')" target="_blank" class="link-card">
                     <div class="link-icon icon-vgen"><img src="img/icons/vgen.svg" alt="VGen" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">VGen</div>
@@ -267,7 +277,7 @@
                         onclick="copyLink(event, 'https://vgen.co/JakobArtstation')"></i>
                 </a>
 
-                <a href="https://www.pixiv.net/request/plans/199712" target="_blank" class="link-card">
+                <a href="https://www.pixiv.net/request/plans/199712" onclick="handlePlatformClick(event, 'pixiv', 'https://www.pixiv.net/request/plans/199712')" target="_blank" class="link-card">
                     <div class="link-icon icon-pixiv"><img src="img/icons/pixiv.svg" alt="Pixiv" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Pixiv Request</div>
@@ -278,7 +288,7 @@
                         onclick="copyLink(event, 'https://www.pixiv.net/request/plans/199712')"></i>
                 </a>
 
-                <a href="https://crepe.cm/ko/@JakobArtstation" target="_blank" class="link-card" style="display: none;">
+                <a href="https://crepe.cm/ko/@JakobArtstation" onclick="handlePlatformClick(event, 'crepe', 'https://crepe.cm/ko/@JakobArtstation')" target="_blank" class="link-card" style="display: none;">
                     <div class="link-icon icon-crepe"><img src="img/icons/crepe.svg" alt="crepe" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Crepe</div>
@@ -289,7 +299,7 @@
                         onclick="copyLink(event, 'https://crepe.cm/ko/@JakobArtstation')"></i>
                 </a>
 
-                <a href="https://artmug.kr/index.php?channel=view&uid=58673" target="_blank" class="link-card">
+                <a href="https://artmug.kr/index.php?channel=view&uid=58673" onclick="handlePlatformClick(event, 'artmug', 'https://artmug.kr/index.php?channel=view&uid=58673')" target="_blank" class="link-card">
                     <div class="link-icon icon-artmug"><img src="img/icons/artmug.svg" alt="ARTMUG" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">ARTMUG</div>
@@ -300,7 +310,7 @@
                         onclick="copyLink(event, 'https://artmug.kr/index.php?channel=view&uid=58673')"></i>
                 </a>
 
-                <a href="https://open.kakao.com/o/szzowhMi" target="_blank" class="link-card">
+                <a href="https://open.kakao.com/o/szzowhMi" onclick="handlePlatformClick(event, 'kakao', 'https://open.kakao.com/o/szzowhMi')" target="_blank" class="link-card">
                     <div class="link-icon icon-kakao"><img src="img/icons/kakaotalk.svg" alt="KakaoTalk" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">KakaoTalk Open Chat</div>
@@ -317,7 +327,7 @@
         <section class="section">
             <h2 class="section-title"><i class="fa-solid fa-users"></i> <span data-i18n="sec_community">Community</span></h2>
             <div class="grid-links">
-                <a href="https://discord.com/invite/RUmEzk287B" target="_blank" class="link-card">
+                <a href="https://discord.com/invite/RUmEzk287B" onclick="handlePlatformClick(event, 'discord', 'https://discord.com/invite/RUmEzk287B')" target="_blank" class="link-card">
                     <div class="link-icon icon-discord"><img src="img/icons/discord.svg" alt="Discord" class="custom-icon-img"></div>
                     <div class="link-info">
                         <div class="link-title">Discord Community</div>
@@ -335,13 +345,28 @@
         </footer>
     </div>
 
+    <!-- 관리자 비밀번호 입력 커스텀 모달 -->
+    <div id="admin-modal" class="admin-modal-overlay">
+        <div class="admin-modal-box">
+            <div class="admin-modal-title">
+                <i class="fa-solid fa-lock"></i> 관리자 인증
+            </div>
+            <div class="admin-modal-desc">관리자 페이지에 접근하려면 비밀번호를 입력하세요.</div>
+            <input type="password" id="admin-password-input" class="admin-modal-input" placeholder="비밀번호 입력" onkeydown="handleAdminKeydown(event)">
+            <div class="admin-modal-buttons">
+                <button class="admin-modal-btn cancel" onclick="closeAdminModal()">취소</button>
+                <button class="admin-modal-btn submit" onclick="submitAdminPassword()">확인</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 토스트 알림 팝업 -->
     <div id="toast" class="toast">복사되었습니다!</div>
 
-    <!-- main.js 파일 연결 추가 -->
-    <script src="js/main.js"></script>
+    <!-- 분리된 모달 전용 자바스크립트 연결 -->
+     <script src="js/main.js"></script>
+    <script src="js/admin-modal.js"></script>  
 
-    <!-- 자바스크립트 -->
     <!-- 자바스크립트 -->
     <script>
         const translations = {
@@ -537,6 +562,26 @@
             setTimeout(() => {
                 toast.classList.remove("show");
             }, 2000);
+        }
+
+
+        // 플랫폼 링크 클릭 시 조회수 증가 함수
+        async function handlePlatformClick(event, platformId, targetUrl) {
+            event.preventDefault(); // 기본 이동 일시 정지
+        
+            // 만약 main.js에 supabase가 선언되어 있다면 window.supabase 등을 통해 호출하거나
+            // main.js에 있는 함수를 그대로 가져다 쓰도록 수정해야 합니다.
+            try {
+                const { error } = await supabase.rpc('increment_view', { row_id: platformId });
+                if (error) {
+                    console.error('조회수 증가 오류:', error);
+                }
+            } catch (err) {
+                console.error('Supabase 호출 에러:', err);
+            }
+        
+            // 새 창으로 해당 링크 열기
+            window.open(targetUrl, '_blank');
         }
     </script>
 </body>

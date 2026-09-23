@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jakob | Admin Dashboard</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 기존 공용 CSS 및 어드민 전용 CSS 연결 -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+
+    <!-- 기본 파비콘 설정 -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/icons/favicon.png">
+    
+    <!-- 구형 브라우저(.ico 형식) 호환용 -->
+    <link rel="shortcut icon" href="../img/icons/favicon.ico" type="image/x-icon">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        async function handlePlatformClick(event, platformId, targetUrl) {
+            event.preventDefault(); // 기본 이동 일시 정지
+                
+            // Supabase RPC 함수 호출하여 조회수 증가 (상단에서 선언된 supabase 사용)
+            const { error } = await supabase.rpc('increment_view', { row_id: platformId });
+            if (error) {
+                console.error('조회수 증가 오류:', error);
+            }
+        
+            // 새 창으로 해당 링크 열기
+            window.open(targetUrl, '_blank');
+        }
+
+        // 플랫폼 이름별 아이콘 파일 매핑
+        const iconMap = {
+            'X (Realism)': 'x.svg',
+            'X (Casual)': 'x.svg',
+            'Instagram': 'instagram.svg',
+            'Pixiv': 'pixiv.svg',
+            'Cara': 'cara.svg',
+            'Bluesky': 'bluesky.svg',
+            'ArtStation': 'artstation.svg',
+            'Threads': 'threads.svg',
+            'Reddit': 'reddit.svg',
+            'YouTube': 'youtube.svg',
+            'Chzzk': 'chzzk.svg',
+            'Twitch': 'twitch.svg',
+            'VGen': 'vgen.svg',
+            'Pixiv Request': 'pixiv.svg',
+            'Crepe': 'crepe.svg',
+            'ARTMUG': 'artmug.svg',
+            'KakaoTalk': 'kakaotalk.svg',
+            'Discord': 'discord.svg'
+        };
+
+        async function loadAdminData() {
+            const { data: platforms, error } = await supabase
+                .from('platform_views')
+                .select('*');
+
+            if (error) {
+                console.error('데이터를 불러오지 못했습니다:', error);
+                return;
+            }
+
+            // 1. 전체 통합 합산 계산 및 반영
+            let totalToday = platforms.reduce((sum, p) => sum + p.today_views, 0);
+            let totalAll = platforms.reduce((sum, p) => sum + p.total_views, 0);
+
+            document.getElementById('total-today-views').textContent = totalToday.toLocaleString();
+            document.getElementById('total-all-views').textContent = totalAll.toLocaleString();
+
+            // 2. 우측 SNS 리스트 동적 렌더링 (하드코딩 제거 및 실데이터 바인딩)
+            const container = document.getElementById('snsListContainer');
+            container.innerHTML = ''; // 기존 하드코딩 목록 초기화
+
+            platforms.forEach(p => {
+                const iconFile = iconMap[p.platform_name] || 'default.svg';
+
+                const item = document.createElement('div');
+                item.className = 'sns-item';
+                item.setAttribute('data-name', p.platform_name);
+                item.setAttribute('data-today', p.today_views);
+                item.setAttribute('data-total', p.total_views);
+
+                item.innerHTML = `
+                    <div class="sns-info-left">
+                        <div class="sns-icon-box"><img src="img/icons/${iconFile}" alt="${p.platform_name}"></div>
+                        <div class="sns-name">${p.platform_name}</div>
+                    </div>
+                    <div class="sns-counts-right">
+                        <span class="count-num today">${p.today_views.toLocaleString()}</span>
+                        <span class="count-num">${p.total_views.toLocaleString()}</span>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', loadAdminData);
+    </script>
+</head>
+
+<body>
+
+    <!-- 배경 레이어 (메인과 동일한 날씨/테마 연동) -->
+    <canvas id="snow-canvas"></canvas>
+    <div class="bg-layer bg-dark-snow"></div>
+    <div class="bg-layer bg-dark-rain"></div>
+    <div class="bg-layer bg-dark-none"></div>
+    <div class="bg-layer bg-light-snow"></div>
+    <div class="bg-layer bg-light-rain"></div>
+    <div class="bg-layer bg-light-none"></div>
+
+    <div class="container" style="max-width: 1100px;">
+
+        <!-- 상단 헤더 영역 -->
+        <div class="admin-header-row">
+            <div class="admin-title">
+                <i class="fa-solid fa-chart-line"></i> 관리자 대시보드
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="weather-toggle" class="theme-btn" aria-label="Toggle Weather" title="날씨 변경">
+                    <i class="fa-solid fa-snowflake"></i>
+                </button>
+                <a href="index.html" class="back-home-btn">
+                    <i class="fa-solid fa-arrow-left"></i> 홈으로 돌아가기
+                </a>
+            </div>
+        </div>
+
+        <!-- 대시보드 메인 콘텐츠 그리드 -->
+        <div class="dashboard-grid">
+            
+            <!-- [좌측] 오늘 조회수 (크게) + 바로 아래 총 조회수 (작게) -->
+            <div class="admin-card total-views-card">
+                <div class="main-today-label">
+                    <i class="fa-solid fa-fire"></i> 오늘 통합 조회수
+                </div>
+                <!-- 숫자 데이터는 추후 백엔드 또는 API 연동 시 동적으로 바인딩 가능 -->
+                <div class="main-today-value" id="total-today-views">1,284</div>
+                
+                <div class="total-views-divider"></div>
+                
+                <div class="sub-total-wrapper">
+                    <span>누적 총 조회수:</span>
+                    <strong id="total-all-views">48,215</strong>
+                </div>
+            </div>
+
+            <!-- [우측] 각 SNS별 전체 조회수 & 오늘 조회수 요약 -->
+            <div class="admin-card">
+                <div class="sns-stats-top-container">
+                    <div class="sns-stats-title">
+                        <i class="fa-solid fa-chart-pie"></i> 플랫폼별 상세 조회수
+                    </div>
+                    <!-- 우측 상단 정렬 버튼 영역 -->
+                    <div class="sort-dropdown-wrapper">
+                        <button class="sort-btn" id="sortMenuBtn" onclick="toggleSortMenu()">
+                            <i class="fa-solid fa-arrow-down-wide-short"></i> <span id="currentSortLabel">기본순</span>
+                        </button>
+                        <div class="sort-menu" id="sortMenu">
+                            <button class="sort-menu-item" onclick="setSort('default')">기본순</button>
+                            <button class="sort-menu-item" onclick="setSort('today')">Today 높은순</button>
+                            <button class="sort-menu-item" onclick="setSort('total')">Total 높은순</button>
+                            <button class="sort-menu-item" onclick="setSort('name')">이름순</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 상단 분류 헤더 라인 -->
+                <div class="sns-table-header">
+                    <span>플랫폼</span>
+                    <div class="sns-header-right">
+                        <span>Today</span>
+                        <span>Total</span>
+                    </div>
+                </div>
+                
+                <div class="sns-list" id="snsListContainer">
+                    <!-- X (Realism) -->
+                    <div class="sns-item" data-name="X (Realism)" data-today="342" data-total="12450">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/x.svg" alt="X"></div>
+                            <div class="sns-name">X (Realism)</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">342</span>
+                            <span class="count-num">12,450</span>
+                        </div>
+                    </div>
+
+                    <!-- X (Casual) -->
+                    <div class="sns-item" data-name="X (Casual)" data-today="410" data-total="15820">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/x.svg" alt="X"></div>
+                            <div class="sns-name">X (Casual)</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">410</span>
+                            <span class="count-num">15,820</span>
+                        </div>
+                    </div>
+
+                    <!-- Instagram -->
+                    <div class="sns-item" data-name="Instagram" data-today="137" data-total="4400">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/instagram.svg" alt="Instagram"></div>
+                            <div class="sns-name">Instagram</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">137</span>
+                            <span class="count-num">4,400</span>
+                        </div>
+                    </div>
+
+                    <!-- Pixiv -->
+                    <div class="sns-item" data-name="Pixiv" data-today="215" data-total="9130">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/pixiv.svg" alt="Pixiv"></div>
+                            <div class="sns-name">Pixiv</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">215</span>
+                            <span class="count-num">9,130</span>
+                        </div>
+                    </div>
+
+                    <!-- Cara -->
+                    <div class="sns-item" data-name="Cara" data-today="95" data-total="3100">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/cara.svg" alt="Cara"></div>
+                            <div class="sns-name">Cara</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">95</span>
+                            <span class="count-num">3,100</span>
+                        </div>
+                    </div>
+
+                    <!-- Bluesky -->
+                    <div class="sns-item" data-name="Bluesky" data-today="110" data-total="3850">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/bluesky.svg" alt="Bluesky"></div>
+                            <div class="sns-name">Bluesky</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">110</span>
+                            <span class="count-num">3,850</span>
+                        </div>
+                    </div>
+
+                    <!-- ArtStation -->
+                    <div class="sns-item" data-name="ArtStation" data-today="280" data-total="11200">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/artstation.svg" alt="ArtStation"></div>
+                            <div class="sns-name">ArtStation</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">280</span>
+                            <span class="count-num">11,200</span>
+                        </div>
+                    </div>
+
+                    <!-- Threads -->
+                    <div class="sns-item" data-name="Threads" data-today="75" data-total="2350">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/threads.svg" alt="Threads"></div>
+                            <div class="sns-name">Threads</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">75</span>
+                            <span class="count-num">2,350</span>
+                        </div>
+                    </div>
+
+                    <!-- Reddit -->
+                    <div class="sns-item" data-name="Reddit" data-today="60" data-total="1900">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/reddit.svg" alt="Reddit"></div>
+                            <div class="sns-name">Reddit</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">60</span>
+                            <span class="count-num">1,900</span>
+                        </div>
+                    </div>
+
+                    <!-- YouTube -->
+                    <div class="sns-item" data-name="YouTube" data-today="180" data-total="6415">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/youtube.svg" alt="YouTube"></div>
+                            <div class="sns-name">YouTube</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">180</span>
+                            <span class="count-num">6,415</span>
+                        </div>
+                    </div>
+
+                    <!-- Chzzk -->
+                    <div class="sns-item" data-name="Chzzk" data-today="230" data-total="8500">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/chzzk.svg" alt="Chzzk"></div>
+                            <div class="sns-name">Chzzk</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">230</span>
+                            <span class="count-num">8,500</span>
+                        </div>
+                    </div>
+
+                    <!-- Twitch -->
+                    <div class="sns-item" data-name="Twitch" data-today="145" data-total="5120">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/twitch.svg" alt="Twitch"></div>
+                            <div class="sns-name">Twitch</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">145</span>
+                            <span class="count-num">5,120</span>
+                        </div>
+                    </div>
+
+                    <!-- VGen -->
+                    <div class="sns-item" data-name="VGen" data-today="88" data-total="2900">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/vgen.svg" alt="VGen"></div>
+                            <div class="sns-name">VGen</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">88</span>
+                            <span class="count-num">2,900</span>
+                        </div>
+                    </div>
+
+                    <!-- Pixiv Request -->
+                    <div class="sns-item" data-name="Pixiv Request" data-today="52" data-total="1750">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/pixiv.svg" alt="Pixiv Request"></div>
+                            <div class="sns-name">Pixiv Request</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">52</span>
+                            <span class="count-num">1,750</span>
+                        </div>
+                    </div>
+
+                    <!-- Crepe -->
+                    <div class="sns-item" data-name="Crepe" data-today="40" data-total="1200">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/crepe.svg" alt="Crepe"></div>
+                            <div class="sns-name">Crepe</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">40</span>
+                            <span class="count-num">1,200</span>
+                        </div>
+                    </div>
+
+                    <!-- ARTMUG -->
+                    <div class="sns-item" data-name="ARTMUG" data-today="65" data-total="2100">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/artmug.svg" alt="ARTMUG"></div>
+                            <div class="sns-name">ARTMUG</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">65</span>
+                            <span class="count-num">2,100</span>
+                        </div>
+                    </div>
+
+                    <!-- KakaoTalk -->
+                    <div class="sns-item" data-name="KakaoTalk" data-today="30" data-total="980">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/kakaotalk.svg" alt="KakaoTalk"></div>
+                            <div class="sns-name">KakaoTalk</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">30</span>
+                            <span class="count-num">980</span>
+                        </div>
+                    </div>
+
+                    <!-- Discord Community -->
+                    <div class="sns-item" data-name="Discord" data-today="120" data-total="4300">
+                        <div class="sns-info-left">
+                            <div class="sns-icon-box"><img src="img/icons/discord.svg" alt="Discord"></div>
+                            <div class="sns-name">Discord</div>
+                        </div>
+                        <div class="sns-counts-right">
+                            <span class="count-num today">120</span>
+                            <span class="count-num">4,300</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            © 2026 JakobArtstation. Admin Control Panel.
+        </footer>
+    </div>
+
+    <!-- 메인 페이지와 동일한 스크립트 연결 (다크모드, 날씨, 배경 효과 동기화) -->
+    <script src="js/main.js"></script>
+
+    <script>
+        // 정렬 메뉴 토글
+        function toggleSortMenu() {
+            const menu = document.getElementById('sortMenu');
+            menu.classList.toggle('active');
+        }
+
+        // 화면 바깥 클릭 시 메뉴 닫기
+        window.addEventListener('click', function(e) {
+            const wrapper = document.querySelector('.sort-dropdown-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('sortMenu').classList.remove('active');
+            }
+        });
+
+        // 정렬 수행 함수
+        function setSort(criteria) {
+            const container = document.getElementById('snsListContainer');
+            const itemsArray = Array.from(container.getElementsByClassName('sns-item'));
+            const labelSpan = document.getElementById('currentSortLabel');
+            
+            const labels = {
+                'default': '기본순',
+                'today': 'Today 높은순',
+                'total': 'Total 높은순',
+                'name': '이름순'
+            };
+            labelSpan.textContent = labels[criteria];
+            document.getElementById('sortMenu').classList.remove('active');
+
+            itemsArray.sort((a, b) => {
+                if (criteria === 'today') {
+                    return parseInt(b.dataset.today) - parseInt(a.dataset.today);
+                } else if (criteria === 'total') {
+                    return parseInt(b.dataset.total) - parseInt(a.dataset.total);
+                } else if (criteria === 'name') {
+                    return a.dataset.name.localeCompare(b.dataset.name);
+                } else {
+                    return 0; // 기본순 (작성된 원래 순서 유지)
+                }
+            });
+
+            // DOM 재배치
+            itemsArray.forEach(item => container.appendChild(item));
+        }
+    </script>
+</body>
+</html>

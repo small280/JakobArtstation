@@ -1,0 +1,121 @@
+/* ==========================================
+   Custom Password Modal Style (Performance Optimized)
+   ========================================== */
+.admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* 무거운 backdrop-filter 대신 투명도 높은 단색 배경 사용 (렉 유발 원인 제거) */
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.admin-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.admin-modal-box {
+    /* 배경 변수 대신 rgba로 투명도 직접 조절 (예: 85% 불투명) */
+    background: rgba(30, 30, 30, 0.85); 
+    border: 1px solid var(--border-color, #444);
+    padding: 30px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    color: var(--text-main, #fff);
+    text-align: center;
+    transform: translateY(10px);
+    transition: transform 0.2s ease;
+    will-change: transform;
+}
+
+.admin-modal-overlay.show .admin-modal-box {
+    transform: translateY(0);
+}
+
+.admin-modal-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.admin-modal-title i {
+    color: var(--accent-color, #4f46e5);
+}
+
+.admin-modal-desc {
+    font-size: 0.85rem;
+    color: var(--text-sub, #aaa);
+    margin-bottom: 20px;
+}
+
+.admin-modal-input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--border-color, #444);
+    color: var(--text-main, #fff);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    margin-bottom: 16px;
+}
+
+body.light .admin-modal-input {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.admin-modal-input:focus {
+    border-color: var(--accent-color, #4f46e5);
+}
+
+.admin-modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.admin-modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border-color, #444);
+    background-color: transparent;
+    color: var(--text-main, #fff);
+    transition: background-color 0.15s ease;
+}
+
+.admin-modal-btn.cancel {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-sub, #aaa);
+}
+
+.admin-modal-btn.cancel:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-modal-btn.submit {
+    background: var(--accent-gradient, #4f46e5);
+    color: #ffffff;
+    border: none;
+}
+
+.admin-modal-btn.submit:hover {
+    opacity: 0.9;
+}
