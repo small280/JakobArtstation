@@ -82,7 +82,7 @@ function initWeatherSystem() {
             x: Math.random() * (width + 100),
             y: startFromTop ? -(Math.random() * 80 + 20) : Math.random() * height,
             length: Math.random() * 20 + 12,
-            speedY: Math.random() * 10 + 12,
+            speedY: Math.random() * 10 + 20,
             speedX: -1.5,
             opacity: Math.random() * 0.4 + 0.2
         };
