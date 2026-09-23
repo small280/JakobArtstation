@@ -382,10 +382,9 @@ body.light .lang-select option {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    /* 기본(OFF) 상태: 회색 톤 */
-    background-color: rgba(50, 50, 50, 0.12);
-    color: #999999;
-    opacity: 0.4;
+    /* 기본(OFF) 상태: 어둡고 투명한 회색 톤 (여기서 투명도 조절 가능) */
+    background-color: rgba(50, 50, 50, 0.15);
+    color: rgba(153, 153, 153, 0.4); /* 글자색만 흐리게 적용 */
     border: 1px solid var(--border-color);
     font-size: 0.72rem;
     font-weight: 700;
@@ -400,22 +399,22 @@ body.light .lang-select option {
 .live-dot {
     width: 7px;
     height: 7px;
-    /* 기본(OFF) 상태: 어두운 회색 점 */
+    /* 기본(OFF) 상태: 어둡고 흐린 점 */
     background-color: #999999;
+    opacity: 0.4; /* 점만 따로 흐리게 조절 */
     border-radius: 50%;
-    opacity: 0.4;
 }
 
 /* 방송 중(ON)일 때 적용될 클래스 (.active) */
 .live-status.active {
     background-color: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
+    color: #22c55e; /* ON일 때는 글자색 선명하게 복구 */
     border-color: rgba(34, 197, 94, 0.4);
 }
 
 .live-status.active .live-dot {
     background-color: #22c55e;
-    opacity: 1;
+    opacity: 1; /* ON일 때는 점도 선명하게 복구 */
     box-shadow: 0 0 8px #22c55e;
     animation: pulse 1.5s infinite;
 }
