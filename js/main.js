@@ -548,28 +548,33 @@ async function trackSiteVisit() {
     }
 }
 
-// 플랫폼 클릭 처리 함수 수정 예시
-async function handlePlatformClick(platformId) {
+// 플랫폼 클릭 처리 함수
+async function handlePlatformClick(event, platformId, url) {
+    // a태그 기본 동작(링크 이동)은 유지하면서 비동기로 카운트 요청 전송
     const CLICK_KEY = `platform_click_${platformId}`;
-    const COOLDOWN_TIME = 10 * 60 * 1000; // 동일 플랫폼은 10분 동안 1번만 카운트
+    const COOLDOWN_TIME = 10 * 60 * 1000; // 동일 플랫폼 10분 중복 방지
     
     const lastClickTime = localStorage.getItem(CLICK_KEY);
     const currentTime = new Date().getTime();
 
-    // 10분이 지나지 않았다면 조회수를 올리지 않고 바로 링크로 이동만 시킴
+    // 10분 이내 재클릭이면 카운트 요청은 생략 (링크 이동은 정상 수행)
     if (lastClickTime && (currentTime - lastClickTime < COOLDOWN_TIME)) {
-        console.log('너무 빠른 중복 클릭입니다.');
         return; 
     }
 
     try {
-        // Supabase RPC 또는 클릭 증가 함수 호출
-        // 예: await supabase.rpc('increment_view', { platform_id: platformId });
-        
-        // 정상 처리되면 현재 시간 저장
-        localStorage.setItem(CLICK_KEY, currentTime);
+        // 사이트 방문자 수 카운트와 유사하게 Supabase Edge Function 또는 API 호출
+        const response = await fetch('https://mojcgizzrwsatgsvboib.supabase.co/functions/v1/track-visit/track-visit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'platform', platform: platformId })
+        });
+
+        if (response.ok) {
+            localStorage.setItem(CLICK_KEY, currentTime);
+        }
     } catch (error) {
-        console.error('클릭 수 증가 실패:', error);
+        console.error('플랫폼 클릭 수 증가 실패:', error);
     }
 }
 
