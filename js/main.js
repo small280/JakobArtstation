@@ -533,12 +533,24 @@ async function trackSiteVisit() {
     if (!lastVisitTime || (currentTime - lastVisitTime > COOLDOWN_TIME)) {
         try {
             if (window.supabaseClient) {
-                // 현재 브라우저의 유입 경로 가져오기 (없으면 빈 문자열)
-                const referrerUrl = document.referrer || '';
+                const referrerUrl = document.referrer || 'Direct';
 
-                // Supabase 함수에 유입 경로 데이터 전달
+                // 1. IP 기반 국가 정보 가져오기 (예시: ipapi.co 또는 ipinfo.io 활용)
+                let countryCode = 'Unknown';
+                try {
+                    const ipRes = await fetch('https://ipapi.co/json/');
+                    const ipData = await ipRes.json();
+                    if (ipData && ipData.country_code) {
+                        countryCode = ipData.country_code; // 예: 'KR', 'US', 'JP' 등
+                    }
+                } catch (e) {
+                    console.warn("국가 정보 조회 실패:", e);
+                }
+
+                // 2. Supabase RPC 호출 시 country 정보도 함께 전달
                 const { error } = await window.supabaseClient.rpc('increment_site_visit', {
-                    visitor_referrer: referrerUrl
+                    visitor_referrer: referrerUrl,
+                    visitor_country: countryCode // Supabase 함수 매개변수 이름에 맞춰 수정
                 });
 
                 if (!error) {
