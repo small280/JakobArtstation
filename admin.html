@@ -95,6 +95,49 @@
 
             // 5. 우측 상세 리스트에 정렬된 SNS 플랫폼 렌더링
             renderPlatforms(snsPlatforms);
+
+            // 6. 국가별 방문자 통계 데이터 불러오기
+            loadCountryStats();
+        }
+
+        async function loadCountryStats() {
+            const { data, error } = await supabaseClient
+                .from('visitor_ips')
+                .select('country');
+
+            if (error) {
+                console.error('국가 통계 불러오기 실패:', error);
+                return;
+            }
+
+            const countryCounts = {};
+            data.forEach(row => {
+                const c = row.country ? row.country.toUpperCase() : 'UNKNOWN';
+                countryCounts[c] = (countryCounts[c] || 0) + 1;
+            });
+
+            // 방문수 많은 순으로 정렬
+            const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]);
+
+            const container = document.getElementById('countryListContainer');
+            container.innerHTML = '';
+
+            if (sortedCountries.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-sub); font-size: 0.85rem; padding: 15px;">기록된 국가 데이터가 없습니다.</div>';
+                return;
+            }
+
+            sortedCountries.forEach(([country, count]) => {
+                const item = document.createElement('div');
+                item.className = 'country-item';
+                item.innerHTML = `
+                    <div class="country-name">
+                        <i class="fa-solid fa-globe"></i> ${country}
+                    </div>
+                    <div class="country-count">${count.toLocaleString()}명</div>
+                `;
+                container.appendChild(item);
+            });
         }
 
         function renderPlatforms(platforms) {
@@ -102,7 +145,6 @@
             container.innerHTML = ''; 
 
             platforms.forEach(p => {
-                // DB 필드명 호환 처리 (platform_name 또는 name 등)
                 const name = p.platform_name || p.name || 'Unknown';
                 const today = p.today_views !== undefined ? p.today_views : (p.today || 0);
                 const total = p.total_views !== undefined ? p.total_views : (p.total || 0);
@@ -167,18 +209,33 @@
         <!-- 대시보드 메인 콘텐츠 그리드 -->
         <div class="dashboard-grid">
             
-            <!-- [좌측] 오늘 조회수 (사이트 방문자 전용) -->
-            <div class="admin-card total-views-card">
-                <div class="main-today-label">
-                    <i class="fa-solid fa-fire"></i> 오늘 사이트 방문수
+            <!-- [좌측] 열 영역 (사이트 방문수 카드 + 국가별 통계 카드 세로 배치) -->
+            <div class="left-column-wrapper" style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- 오늘 조회수 (사이트 방문자 전용) -->
+                <div class="admin-card total-views-card">
+                    <div class="main-today-label">
+                        <i class="fa-solid fa-fire"></i> 오늘 사이트 방문수
+                    </div>
+                    <div class="main-today-value" id="total-today-views">0</div>
+                    
+                    <div class="total-views-divider"></div>
+                    
+                    <div class="sub-total-wrapper">
+                        <span>누적 총 방문수:</span>
+                        <strong id="total-all-views">0</strong>
+                    </div>
                 </div>
-                <div class="main-today-value" id="total-today-views">0</div>
-                
-                <div class="total-views-divider"></div>
-                
-                <div class="sub-total-wrapper">
-                    <span>누적 총 방문수:</span>
-                    <strong id="total-all-views">0</strong>
+
+                <!-- 🌟 [추가됨] 국가별 방문자 통계 카드 -->
+                <div class="admin-card country-stats-card">
+                    <div class="sns-stats-top-container" style="margin-bottom: 12px;">
+                        <div class="sns-stats-title">
+                            <i class="fa-solid fa-earth-americas"></i> 국가별 방문 통계
+                        </div>
+                    </div>
+                    <div class="country-list" id="countryListContainer">
+                        <!-- 동적 생성 -->
+                    </div>
                 </div>
             </div>
 
