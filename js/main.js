@@ -1,5 +1,3 @@
-// main.js
-
 // ==========================================
 // 1. API 및 분석 관련
 // ==========================================
@@ -61,9 +59,7 @@ function initWeatherSystem() {
         height = canvas.height = window.innerHeight;
     });
 
-    // ------------------------------------------
     // 눈 / 비 입자 생성 함수
-    // ------------------------------------------
     function createSnowflake(startFromTop = false) {
         return {
             x: Math.random() * width,
@@ -88,7 +84,6 @@ function initWeatherSystem() {
         };
     }
 
-    // 초기 입자 배열
     let snowParticles = targetMode === 'snow' 
         ? Array.from({ length: 80 }, () => createSnowflake(false)) 
         : [];
@@ -99,7 +94,6 @@ function initWeatherSystem() {
 
     const ripples = [];
 
-    // 토글 버튼 클릭 시 호출
     resetWeatherParticles = function(mode) {
         if (mode === 'snow') {
             snowParticles = Array.from({ length: 40 }, () => {
@@ -116,7 +110,6 @@ function initWeatherSystem() {
         }
     };
 
-    // 6각 눈 결정 그림 함수
     function drawSnowflake(x, y, size, color, rotation) {
         ctx.save();
         ctx.translate(x, y);
@@ -139,46 +132,29 @@ function initWeatherSystem() {
         ctx.restore();
     }
 
-    // ------------------------------------------
-    // 메인 프레임 루프 (render)
-    // ------------------------------------------
     function render() {
         ctx.clearRect(0, 0, width, height);
 
-        // [수정 포인트] 라이트 모드 판별을 'light-mode' 기준으로 통일
         const isLightMode = document.body.classList.contains('light-mode');
-
-        // 다크 모드일 때는 흰색, 라이트 모드일 때는 잘 보이는 어두운 블루/회색조 컬러로 설정
         const snowBaseColor = isLightMode ? `70, 130, 180` : `255, 255, 255`;
         const rainBaseColor = isLightMode ? `65, 105, 225` : `255, 255, 255`;
 
-        // 1. 눈 모드 상단 보충
         if (targetMode === 'snow' && snowParticles.length < 40) {
             snowParticles.push(createSnowflake(true));
         }
 
-        // 2. 비 모드 상단 보충
         if (targetMode === 'rain' && rainDrops.length < 80) {
             rainDrops.push(createRainDrop(true));
         }
 
-        // ------------------------------------------
-        // [눈 입자 렌더링 & 이동]
-        // ------------------------------------------
         for (let i = snowParticles.length - 1; i >= 0; i--) {
             const p = snowParticles[i];
-
-            if (targetMode !== 'snow') {
-                p.opacity -= 0.015;
-            }
-
+            if (targetMode !== 'snow') p.opacity -= 0.015;
             if (p.opacity <= 0) {
                 snowParticles.splice(i, 1);
                 continue;
             }
-
             drawSnowflake(p.x, p.y, p.size, `rgba(${snowBaseColor}, ${p.opacity})`, p.rotation);
-
             p.y += p.speedY;
             p.x += p.speedX;
             p.rotation += p.spin;
@@ -193,16 +169,9 @@ function initWeatherSystem() {
             }
         }
 
-        // ------------------------------------------
-        // [빗줄기 & 파문 렌더링 & 이동]
-        // ------------------------------------------
         for (let i = rainDrops.length - 1; i >= 0; i--) {
             const d = rainDrops[i];
-
-            if (targetMode !== 'rain') {
-                d.opacity -= 0.02;
-            }
-
+            if (targetMode !== 'rain') d.opacity -= 0.02;
             if (d.opacity <= 0) {
                 rainDrops.splice(i, 1);
                 continue;
@@ -229,7 +198,6 @@ function initWeatherSystem() {
                         opacity: d.opacity
                     });
                 }
-
                 if (targetMode === 'rain') {
                     d.y = -d.length;
                     d.x = Math.random() * (width + 100);
@@ -239,13 +207,9 @@ function initWeatherSystem() {
             }
         }
 
-        // [바닥 파문 그려주기]
         for (let i = ripples.length - 1; i >= 0; i--) {
             const r = ripples[i];
-
-            if (targetMode !== 'rain') {
-                r.opacity -= 0.03;
-            }
+            if (targetMode !== 'rain') r.opacity -= 0.03;
 
             ctx.beginPath();
             ctx.ellipse(r.x, r.y, r.radius, r.radius * 0.4, 0, 0, Math.PI * 2);
@@ -276,11 +240,8 @@ function applyWeatherClass(mode) {
     document.body.classList.add(`weather-${mode}`);
 }
 
-// 라이트/다크 모드 토글 함수
 function toggleTheme() {
     const themeBtn = document.getElementById("theme-toggle");
-    
-    // light-mode 토글
     const isLight = document.body.classList.toggle('light-mode');
     
     if (isLight) {
@@ -332,7 +293,6 @@ function setupWeatherToggle() {
         }
 
         localStorage.setItem('weather', targetMode);
-
         applyWeatherClass(targetMode);
         updateWeatherIcon(weatherBtn, targetMode);
 
@@ -368,10 +328,275 @@ function updateWeatherIcon(btn, mode) {
 }
 
 // ==========================================
-// 4. 페이지 이벤트 초기화
+// 4. 다국어 번역 및 토스트 시스템
+// ==========================================
+const translations = {
+    ko: {
+        bio: "Illustrator & Character Designer<br>라이브 스트리밍 및 외주 / 커미션 문의",
+        sec_live: "Live Streaming",
+        chzzk_desc: "치지직 생방송 채널",
+        youtube_desc: "라이브 & 다시보기",
+        twitch_desc: "트위치 생방송 채널",
+        sec_comm: "Commissions & Contact",
+        crepe_desc: "크레페 커미션 신청",
+        artmug_desc: "아트머그 외주 & 커미션",
+        kakao_desc: "카카오톡 개인문의",
+        vgen_desc: "VGen 글로벌 커미션",
+        pixiv_req_desc: "픽시브 리퀘스트",
+        sec_community: "Community",
+        discord_desc: "팬 커뮤니티 & 공지사항",
+        sec_sns: "SNS & Gallery",
+        twitter_realism_desc: "실사 & 반실사 일러스트",
+        twitter_casual_desc: "캐주얼 & 서브컬쳐 일러스트",
+        instagram_desc: "갤러리 & 피드",
+        pixiv_desc: "픽시브 작품 모음",
+        cara_desc: "아티스트 포트폴리오",
+        bluesky_desc: "블루스카이 채널",
+        artstation_desc: "포트폴리오 갤러리",
+        threads_desc: "스레드 일상 & 작업",
+        reddit_desc: "레딧 서브레딧",
+        copy_toast: "이메일 주소가 복사되었습니다!",
+        link_copy_toast: "링크 주소가 복사되었습니다!"
+    },
+    en: {
+        bio: "Illustrator & Character Designer<br>Live Streamer / Inquiries for Business & Commission",
+        sec_live: "Live Streaming",
+        chzzk_desc: "Chzzk Live Stream Channel",
+        youtube_desc: "Live & VODs",
+        twitch_desc: "Twitch Live Stream Channel",
+        sec_comm: "Commissions & Contact",
+        crepe_desc: "crepe Commission",
+        artmug_desc: "ARTMUG Commission & Business",
+        kakao_desc: "KakaoTalk Private Inquiry",
+        vgen_desc: "VGen Global Commission",
+        pixiv_req_desc: "Pixiv Request",
+        sec_community: "Community",
+        discord_desc: "Fan Community & Announcements",
+        sec_sns: "SNS & Gallery",
+        twitter_realism_desc: "Realism & Semi-Realism Art",
+        twitter_casual_desc: "Casual & Subculture Art",
+        instagram_desc: "Gallery & Feed",
+        pixiv_desc: "Pixiv Artworks",
+        cara_desc: "Artist Portfolio",
+        bluesky_desc: "Bluesky Channel",
+        artstation_desc: "Portfolio Gallery",
+        threads_desc: "Threads Daily & Works",
+        reddit_desc: "Reddit Community",
+        copy_toast: "Email address copied to clipboard!",
+        link_copy_toast: "Link URL copied to clipboard!"
+    },
+    ja: {
+        bio: "Illustrator & Character Designer<br>ライブ配信 / お仕事・有償依頼のご相談",
+        sec_live: "Live Streaming",
+        chzzk_desc: "Chzzk 配信チャンネル",
+        youtube_desc: "ライブ & アーカイブ",
+        twitch_desc: "Twitch 配信チャンネル",
+        sec_comm: "Commissions & Contact",
+        crepe_desc: "crepe 有償依頼",
+        artmug_desc: "ARTMUG 有償依頼・お仕事",
+        kakao_desc: "カカオトーク個人問い合わせ",
+        vgen_desc: "VGen グローバルコミッション",
+        pixiv_req_desc: "Pixiv リクエスト",
+        sec_community: "Community",
+        discord_desc: "ファンコミュニティ & お知らせ",
+        sec_sns: "SNS & Gallery",
+        twitter_realism_desc: "リアル & 半リアル イラスト",
+        twitter_casual_desc: "カジュアル & サブカル イラスト",
+        instagram_desc: "ギャラリー & 投稿",
+        pixiv_desc: "Pixiv 作品集",
+        cara_desc: "ポートフォリオ",
+        bluesky_desc: "Bluesky チャンネル",
+        artstation_desc: "ポートフォリオギャラリー",
+        threads_desc: "Threads 日常 & 制作",
+        reddit_desc: "Reddit コミュニティ",
+        copy_toast: "メールアドレスをコピーしました！",
+        link_copy_toast: "リンクアドレスをコピーしました！"
+    },
+    "zh-CN": {
+        bio: "Illustrator & Character Designer<br>直播 / 约稿与商务合作请咨询",
+        sec_live: "Live Streaming",
+        chzzk_desc: "Chzzk 直播频道",
+        youtube_desc: "直播与录播",
+        twitch_desc: "Twitch 直播频道",
+        sec_comm: "Commissions & Contact",
+        crepe_desc: "crepe 约稿",
+        artmug_desc: "ARTMUG 约稿与商务",
+        kakao_desc: "KakaoTalk 个人咨询",
+        vgen_desc: "VGen 全球约稿",
+        pixiv_req_desc: "Pixiv Request 约稿",
+        sec_community: "Community",
+        discord_desc: "粉丝社区与公告",
+        sec_sns: "SNS & Gallery",
+        twitter_realism_desc: "写实 & 半写实插画",
+        twitter_casual_desc: "日系 & 二次元插画",
+        instagram_desc: "画廊与动态",
+        pixiv_desc: "Pixiv 作品集",
+        cara_desc: "艺术家作品集",
+        bluesky_desc: "Bluesky 频道",
+        artstation_desc: "作品集画廊",
+        threads_desc: "Threads 日常与创作",
+        reddit_desc: "Reddit 社区",
+        copy_toast: "邮箱地址已复制到剪贴板！",
+        link_copy_toast: "链接地址已复制到剪贴板！"
+    },
+    "zh-TW": {
+        bio: "Illustrator & Character Designer<br>實況直播 / 商業委託與有償約稿請洽詢",
+        sec_live: "Live Streaming",
+        chzzk_desc: "Chzzk 直播頻道",
+        youtube_desc: "直播與重播",
+        twitch_desc: "Twitch 直播頻道",
+        sec_comm: "Commissions & Contact",
+        crepe_desc: "crepe 委託",
+        artmug_desc: "ARTMUG 委託與商業合作",
+        kakao_desc: "KakaoTalk 個人諮詢",
+        vgen_desc: "VGen 全球委託",
+        pixiv_req_desc: "Pixiv Request 委託",
+        sec_community: "Community",
+        discord_desc: "粉絲社群與公告",
+        sec_sns: "SNS & Gallery",
+        twitter_realism_desc: "寫實 & 半寫實插畫",
+        twitter_casual_desc: "日系 & 二次元插畫",
+        instagram_desc: "畫廊與日常",
+        pixiv_desc: "Pixiv 作品集",
+        cara_desc: "藝術家作品集",
+        bluesky_desc: "Bluesky 頻道",
+        artstation_desc: "作品集畫廊",
+        threads_desc: "Threads 日常與創作",
+        reddit_desc: "Reddit 社群",
+        copy_toast: "信箱地址已複製到剪貼簿！",
+        link_copy_toast: "連結地址已複製到剪貼簿！"
+    }
+};
+
+let currentLang = 'ko';
+
+function changeLanguage(lang) {
+    currentLang = lang;
+    const keys = translations[lang];
+    if (!keys) return;
+
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (keys[key]) {
+            element.innerHTML = keys[key];
+        }
+    });
+
+    localStorage.setItem('preferred_lang', lang);
+}
+
+function copyEmail(emailText) {
+    navigator.clipboard.writeText(emailText).then(() => {
+        const toastMsg = translations[currentLang]?.copy_toast || "복사되었습니다!";
+        showToast(toastMsg);
+    }).catch(err => {
+        console.error('복사 실패:', err);
+    });
+}
+
+function copyLink(event, url) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    navigator.clipboard.writeText(url).then(() => {
+        const toastMsg = translations[currentLang]?.link_copy_toast || "링크 주소가 복사되었습니다!";
+        showToast(toastMsg);
+    }).catch(err => {
+        console.error('Copy Link 실패:', err);
+    });
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2000);
+}
+
+// ==========================================
+// 5. Supabase 방문 및 클릭 집계
+// ==========================================
+async function trackSiteVisit() {
+    try {
+        // 방금 배포한 내 Edge Function의 URL
+        const functionUrl = 'https://mojcgizzrwsatgsvboib.supabase.co/functions/v1/track-visit';
+        
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Supabase Anon Key(공개용 키)를 Authorization 헤더에 넣어줍니다
+                'Authorization': `sb_publishable_vXeVkey0aLcuVxeLws219A_YPEz_Ze6`
+            }
+        });
+        
+        const data = await response.json();
+        console.log('방문 집계 결과:', data);
+    } catch (err) {
+        console.error('방문 집계 에러:', err);
+    }
+}
+
+// 페이지가 로드될 때 실행
+trackSiteVisit();
+
+async function handlePlatformClick(event, platformId, targetUrl) {
+    event.preventDefault();
+        
+    try {
+        const clickKey = `clicked_${platformId}`;
+        
+        if (!sessionStorage.getItem(clickKey)) {
+            if (window.supabaseClient) {
+                const { error } = await window.supabaseClient.rpc('increment_view', { row_id: platformId });
+                if (error) {
+                    console.error('조회수 증가 오류:', error);
+                } else {
+                    sessionStorage.setItem(clickKey, 'true');
+                }
+            }
+        }
+    } catch (err) {
+        console.error('Supabase 호출 에러:', err);
+    } finally {
+        window.open(targetUrl, '_blank');
+    }
+}
+
+// ==========================================
+// 6. 애니메이션 일시정지 제어
+// ==========================================
+let isAnimationPaused = false;
+
+window.pauseWeatherAnimation = function() {
+    isAnimationPaused = true;
+    if (currentAnimationId) {
+        cancelAnimationFrame(currentAnimationId);
+        currentAnimationId = null;
+    }
+};
+
+window.resumeWeatherAnimation = function() {
+    if (isAnimationPaused) {
+        isAnimationPaused = false;
+        const canvas = document.getElementById('snow-canvas');
+        if (canvas && typeof initWeatherSystem === 'function') {
+            if (!currentAnimationId) {
+                initWeatherSystem();
+            }
+        }
+    }
+};
+
+// ==========================================
+// 7. 통합 페이지 초기화 (DOMContentLoaded)
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 초기 테마 로드
+    // 1. 테마 로드
     const savedTheme = localStorage.getItem('theme');
     const themeBtn = document.getElementById('theme-toggle');
 
@@ -400,17 +625,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. 테마 토글 버튼 이벤트 바인딩
     if (themeBtn) {
-        // 기존 리스너 중복 방지를 위해 기존 onclick 대신 안전하게 할당
         themeBtn.onclick = toggleTheme;
     }
 
+    // 2. 언어 선택 초기화
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) {
+        langSelect.addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
+        });
+
+        const savedLang = localStorage.getItem('preferred_lang') || 'ko';
+        langSelect.value = savedLang;
+        changeLanguage(savedLang);
+    }
+
+    // 3. 기능 실행
     updateLiveStatuses();
     setupWeatherToggle();
     initWeatherSystem();
-    // ... (이하 생략)
+    trackSiteVisit();
 
+    // 4. GA4 링크 클릭 이벤트 바인딩
     const linkCards = document.querySelectorAll('.link-card');
     linkCards.forEach(card => {
         card.addEventListener('click', () => {
@@ -425,93 +662,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-});
-
-// // ==========================================
-// // 5. 방문자 조회
-// // ==========================================
-
-// // 1. 페이지 방문 시 조회수 증가 및 가져오기
-// async function trackPageView() {
-//     try {
-//         // 'mysite-portfolio'는 본인만의 고유한 이름(namespace)으로 변경하세요.
-//         const response = await fetch('https://api.countapi.xyz/hit/mysite-portfolio/visits');
-//         const data = await response.json();
-//         console.log(`총 방문자 수: ${data.value}`);
-//     } catch (err) {
-//         console.log("방문자 집계 에러:", err);
-//     }
-// }
-
-// // 2. SNS 링크 클릭 시 클릭 수 증가 및 가져오기
-// async function trackLinkClick(title) {
-//     try {
-//         // 공백이나 특수문자가 들어가면 에러가 날 수 있으니 영문 키로 변환 (예: youtube, chzzk 등)
-//         const key = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        
-//         const response = await fetch(`https://api.countapi.xyz/hit/mysite-portfolio/click_${key}`);
-//         const data = await response.json();
-//         console.log(`${title} 클릭 수: ${data.value}`);
-//     } catch (err) {
-//         console.log("클릭 집계 에러:", err);
-//     }
-// }
-
-// // 페이지 로드 시 실행
-// document.addEventListener('DOMContentLoaded', () => {
-//     trackPageView();
-
-//     // 기존 링크 클릭 이벤트에 연결
-//     const linkCards = document.querySelectorAll('.link-card');
-//     linkCards.forEach(card => {
-//         card.addEventListener('click', () => {
-//             const title = card.querySelector('.link-title')?.textContent || 'Unknown';
-//             trackLinkClick(title);
-//         });
-//     });
-// });
-
-// main_6.js 하단에 추가
-let isAnimationPaused = false;
-
-window.pauseWeatherAnimation = function() {
-    isAnimationPaused = true;
-    if (currentAnimationId) {
-        cancelAnimationFrame(currentAnimationId);
-        currentAnimationId = null;
-    }
-};
-
-window.resumeWeatherAnimation = function() {
-    if (isAnimationPaused) {
-        isAnimationPaused = false;
-        // 캔버스 루프 재시작을 위해 initWeatherSystem 내부의 렌더 함수 우회 실행
-        const canvas = document.getElementById('snow-canvas');
-        if (canvas && typeof initWeatherSystem === 'function') {
-            // 이미 실행 중이 아니라면 다시 구동
-            if (!currentAnimationId) {
-                initWeatherSystem();
-            }
-        }
-    }
-};
-
-// 사이트 접속 시 전체 방문자수 증가 함수
-async function trackSiteVisit() {
-    try {
-        if (window.supabaseClient) {
-            // 접속 시 'site_visit' 행의 조회수를 1 증가시킴
-            const { error } = await window.supabaseClient.rpc('increment_view', { row_id: 'site_visit' });
-            if (error) {
-                console.error('사이트 방문 집계 오류:', error);
-            }
-        }
-    } catch (err) {
-        console.error('사이트 방문 집계 에러:', err);
-    }
-}
-
-// 페이지가 완전히 로드될 때 실행
-document.addEventListener('DOMContentLoaded', () => {
-    trackSiteVisit();
 });

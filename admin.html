@@ -53,12 +53,14 @@
         };
 
         async function loadAdminData() {
-            // 1. 먼저 기본 플랫폼 목록을 화면에 0으로 먼저 렌더링 (임시 데이터 깜빡임 방지 및 빈 리스트 방지)
-            renderPlatforms(Object.keys(iconMap).map(name => ({
+            // 1. 초기 렌더링 시에도 Today 높은순(내림차순) 정렬이 반영되도록 처리
+            const initialList = Object.keys(iconMap).map(name => ({
                 platform_name: name,
                 today_views: 0,
                 total_views: 0
-            })));
+            })).sort((a, b) => b.today_views - a.today_views);
+
+            renderPlatforms(initialList);
 
             if (!supabaseClient) return;
 
@@ -84,7 +86,14 @@
             document.getElementById('total-today-views').textContent = (siteVisitData.today_views || 0).toLocaleString();
             document.getElementById('total-all-views').textContent = (siteVisitData.total_views || 0).toLocaleString();
 
-            // 4. 우측 상세 리스트에는 SNS 플랫폼만 다시 렌더링
+            // 4. 데이터를 받아온 직후 기본적으로 'Today 높은순'으로 정렬
+            snsPlatforms.sort((a, b) => {
+                const todayA = a.today_views !== undefined ? a.today_views : (a.today || 0);
+                const todayB = b.today_views !== undefined ? b.today_views : (b.today || 0);
+                return todayB - todayA;
+            });
+
+            // 5. 우측 상세 리스트에 정렬된 SNS 플랫폼 렌더링
             renderPlatforms(snsPlatforms);
         }
 
@@ -126,7 +135,7 @@
 
 <body>
 
-    <!-- 배경 레이er -->
+    <!-- 배경 레이어 -->
     <canvas id="snow-canvas"></canvas>
     <div class="bg-layer bg-dark-snow"></div>
     <div class="bg-layer bg-dark-rain"></div>
@@ -181,10 +190,9 @@
                     </div>
                     <div class="sort-dropdown-wrapper">
                         <button class="sort-btn" id="sortMenuBtn" onclick="toggleSortMenu()">
-                            <i class="fa-solid fa-arrow-down-wide-short"></i> <span id="currentSortLabel">기본순</span>
+                            <i class="fa-solid fa-arrow-down-wide-short"></i> <span id="currentSortLabel">Today 높은순</span>
                         </button>
                         <div class="sort-menu" id="sortMenu">
-                            <button class="sort-menu-item" onclick="setSort('default')">기본순</button>
                             <button class="sort-menu-item" onclick="setSort('today')">Today 높은순</button>
                             <button class="sort-menu-item" onclick="setSort('total')">Total 높은순</button>
                             <button class="sort-menu-item" onclick="setSort('name')">이름순</button>
@@ -232,7 +240,6 @@
             const labelSpan = document.getElementById('currentSortLabel');
             
             const labels = {
-                'default': '기본순',
                 'today': 'Today 높은순',
                 'total': 'Total 높은순',
                 'name': '이름순'
