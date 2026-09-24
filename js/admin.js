@@ -83,43 +83,89 @@ async function loadAdminData() {
 }
 
 async function loadCountryStats() {
+    // visitor_ips 테이블에서 country와 referrer 컬럼을 함께 조회
     const { data, error } = await supabaseClient
         .from('visitor_ips')
-        .select('country');
+        .select('country, referrer');
 
     if (error) {
-        console.error('국가 통계 불러오기 실패:', error);
+        console.error('국가 및 유입 통계 불러오기 실패:', error);
         return;
     }
 
     const countryCounts = {};
+    const referrerCounts = {};
+
     data.forEach(row => {
+        // 1. 국가 집계
         const c = row.country ? row.country.toUpperCase() : 'UNKNOWN';
         countryCounts[c] = (countryCounts[c] || 0) + 1;
+
+        // 2. 유입경로 집계
+        let ref = row.referrer ? row.referrer.trim() : '';
+        if (!ref || ref === '') {
+            ref = '직접 접속 (Direct)';
+        }
+        referrerCounts[ref] = (referrerCounts[ref] || 0) + 1;
     });
 
-    // 방문수 많은 순으로 정렬
+    // --- 국가별 통계 렌더링 ---
     const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]);
-
-    const container = document.getElementById('countryListContainer');
-    container.innerHTML = '';
+    const countryContainer = document.getElementById('countryListContainer');
+    countryContainer.innerHTML = '';
 
     if (sortedCountries.length === 0) {
-        container.innerHTML = '<div style="text-align: center; color: var(--text-sub); font-size: 0.85rem; padding: 15px;">기록된 국가 데이터가 없습니다.</div>';
-        return;
+        countryContainer.innerHTML = '<div style="text-align: center; color: var(--text-sub); font-size: 0.85rem; padding: 15px;">기록된 국가 데이터가 없습니다.</div>';
+    } else {
+        sortedCountries.forEach(([country, count]) => {
+            const item = document.createElement('div');
+            item.className = 'country-item';
+            item.innerHTML = `
+                <div class="country-name">
+                    <i class="fa-solid fa-globe"></i> ${country}
+                </div>
+                <div class="country-count">${count.toLocaleString()}명</div>
+            `;
+            countryContainer.appendChild(item);
+        });
     }
 
-    sortedCountries.forEach(([country, count]) => {
-        const item = document.createElement('div');
-        item.className = 'country-item';
-        item.innerHTML = `
-            <div class="country-name">
-                <i class="fa-solid fa-globe"></i> ${country}
-            </div>
-            <div class="country-count">${count.toLocaleString()}명</div>
-        `;
-        container.appendChild(item);
-    });
+    // --- [추가] 유입 경로 통계 렌더링 ---
+    const sortedReferrers = Object.entries(referrerCounts).sort((a, b) => b[1] - a[1]);
+    const referrerContainer = document.getElementById('referrerListContainer');
+    if (referrerContainer) {
+        referrerContainer.innerHTML = '';
+
+        if (sortedReferrers.length === 0) {
+            referrerContainer.innerHTML = '<div style="text-align: center; color: var(--text-sub); font-size: 0.85rem; padding: 15px;">기록된 유입경로 데이터가 없습니다.</div>';
+        } else {
+            sortedReferrers.forEach(([ref, count]) => {
+                const item = document.createElement('div');
+                item.className = 'country-item';
+                
+                let linkHtml = '';
+                if (ref.startsWith('http://') || ref.startsWith('https://')) {
+                    try {
+                        const urlObj = new URL(ref);
+                        const displayRef = urlObj.hostname + (urlObj.pathname !== '/' ? urlObj.pathname : '');
+                        linkHtml = `<a href="${ref}" target="_blank" title="${ref}" style="color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><i class="fa-solid fa-link" style="font-size: 0.8rem; color: var(--text-sub);"></i> <span style="overflow: hidden; text-overflow: ellipsis;">${displayRef}</span></a>`;
+                    } catch (e) {
+                        linkHtml = `<span>${ref}</span>`;
+                    }
+                } else {
+                    linkHtml = `<span>${ref}</span>`;
+                }
+
+                item.innerHTML = `
+                    <div class="country-name" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">
+                        ${linkHtml}
+                    </div>
+                    <div class="country-count">${count.toLocaleString()}회</div>
+                `;
+                referrerContainer.appendChild(item);
+            });
+        }
+    }
 }
 
 function renderPlatforms(platforms) {

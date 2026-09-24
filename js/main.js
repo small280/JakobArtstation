@@ -520,6 +520,9 @@ function showToast(message) {
 // ==========================================
 // 5. Supabase 방문 및 클릭 집계 (RPC 방식)
 // ==========================================
+// ==========================================
+// 5. Supabase 방문 및 클릭 집계 (RPC 방식)
+// ==========================================
 async function trackSiteVisit() {
     const VISIT_KEY = 'site_visit_timestamp';
     const COOLDOWN_TIME = 30 * 60 * 1000; // 30분 중복 방지
@@ -530,7 +533,14 @@ async function trackSiteVisit() {
     if (!lastVisitTime || (currentTime - lastVisitTime > COOLDOWN_TIME)) {
         try {
             if (window.supabaseClient) {
-                const { error } = await window.supabaseClient.rpc('increment_site_visit');
+                // 현재 브라우저의 유입 경로 가져오기 (없으면 빈 문자열)
+                const referrerUrl = document.referrer || '';
+
+                // Supabase 함수에 유입 경로 데이터 전달
+                const { error } = await window.supabaseClient.rpc('increment_site_visit', {
+                    visitor_referrer: referrerUrl
+                });
+
                 if (!error) {
                     localStorage.setItem(VISIT_KEY, currentTime);
                 } else {
