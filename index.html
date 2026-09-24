@@ -566,20 +566,21 @@
         // 플랫폼 링크 클릭 시 조회수 증가 함수
         async function handlePlatformClick(event, platformId, targetUrl) {
             event.preventDefault(); // 기본 이동 일시 정지
-        
-            // 만약 main.js에 supabase가 선언되어 있다면 window.supabase 등을 통해 호출하거나
-            // main.js에 있는 함수를 그대로 가져다 쓰도록 수정해야 합니다.
+                
             try {
-                const { error } = await supabase.rpc('increment_view', { row_id: platformId });
-                if (error) {
-                    console.error('조회수 증가 오류:', error);
+                // supabase 객체가 전역에 존재하고 초기화된 경우에만 통계 요청 수행
+                if (typeof supabase !== 'undefined' && supabase) {
+                    const { error } = await supabase.rpc('increment_view', { row_id: platformId });
+                    if (error) {
+                        console.error('조회수 증가 오류:', error);
+                    }
                 }
             } catch (err) {
                 console.error('Supabase 호출 에러:', err);
+            } finally {
+                // 에러가 발생하더라도 사용자는 정상적으로 링크로 이동할 수 있도록 보장
+                window.open(targetUrl, '_blank');
             }
-        
-            // 새 창으로 해당 링크 열기
-            window.open(targetUrl, '_blank');
         }
     </script>
 </body>
