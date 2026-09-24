@@ -102,10 +102,16 @@ async function loadCountryStats() {
         countryCounts[c] = (countryCounts[c] || 0) + 1;
 
         // 2. 유입경로 집계
+        // 유입경로 집계 시 t.co 처리 예시
         let ref = row.referrer ? row.referrer.trim() : '';
+
         if (!ref || ref === '') {
             ref = '직접 접속 (Direct)';
-        }
+        } else if (ref.includes('t.co')) {
+            ref = 'Twitter / X';
+        } else if (ref.includes('instagram.com')) {
+            ref = 'Instagram';
+        } // 필요한 플랫폼들을 이런 식으로 매핑해 줄 수 있습니다.
         referrerCounts[ref] = (referrerCounts[ref] || 0) + 1;
     });
 

@@ -520,9 +520,6 @@ function showToast(message) {
 // ==========================================
 // 5. Supabase 방문 및 클릭 집계 (RPC 방식)
 // ==========================================
-// ==========================================
-// 5. Supabase 방문 및 클릭 집계 (RPC 방식)
-// ==========================================
 async function trackSiteVisit() {
     const VISIT_KEY = 'site_visit_timestamp';
     const COOLDOWN_TIME = 30 * 60 * 1000; // 30분 중복 방지
