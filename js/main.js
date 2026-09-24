@@ -518,39 +518,33 @@ function showToast(message) {
 }
 
 // ==========================================
-// 5. Supabase 방문 및 클릭 집계
+// 5. Supabase 방문 및 클릭 집계 (RPC 방식)
 // ==========================================
-// 사이트 방문 기록 추적 함수 수정 예시
 async function trackSiteVisit() {
     const VISIT_KEY = 'site_visit_timestamp';
-    const COOLDOWN_TIME = 30 * 60 * 1000; // 30분을 밀리초로 계산 (원하는 시간으로 변경 가능)
+    const COOLDOWN_TIME = 30 * 60 * 1000; // 30분 중복 방지
     
     const lastVisitTime = localStorage.getItem(VISIT_KEY);
     const currentTime = new Date().getTime();
 
-    // 마지막 방문 기록이 없거나, 30분이 지난 경우에만 조회수 증가 API 호출
     if (!lastVisitTime || (currentTime - lastVisitTime > COOLDOWN_TIME)) {
         try {
-            // 기존에 Supabase Edge Function을 호출하던 코드 (예시)
-            const response = await fetch('https://mojcgizzrwsatgsvboib.supabase.co/functions/v1/track-visit/track-visit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'visit' })
-            });
-
-            if (response.ok) {
-                // 현재 시간을 저장하여 30분 동안은 다시 안 올라가게 막음
-                localStorage.setItem(VISIT_KEY, currentTime);
+            if (window.supabaseClient) {
+                const { error } = await window.supabaseClient.rpc('increment_site_visit');
+                if (!error) {
+                    localStorage.setItem(VISIT_KEY, currentTime);
+                } else {
+                    console.error('방문 기록 저장 실패:', error);
+                }
             }
         } catch (error) {
-            console.error('방문 기록 저장 실패:', error);
+            console.error('방문 기록 통신 오류:', error);
         }
     }
 }
 
 // 플랫폼 클릭 처리 함수
 async function handlePlatformClick(event, platformId, url) {
-    // a태그 기본 동작(링크 이동)은 유지하면서 비동기로 카운트 요청 전송
     const CLICK_KEY = `platform_click_${platformId}`;
     const COOLDOWN_TIME = 10 * 60 * 1000; // 동일 플랫폼 10분 중복 방지
     
@@ -563,18 +557,16 @@ async function handlePlatformClick(event, platformId, url) {
     }
 
     try {
-        // 사이트 방문자 수 카운트와 유사하게 Supabase Edge Function 또는 API 호출
-        const response = await fetch('https://mojcgizzrwsatgsvboib.supabase.co/functions/v1/track-visit/track-visit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'platform', platform: platformId })
-        });
-
-        if (response.ok) {
-            localStorage.setItem(CLICK_KEY, currentTime);
+        if (window.supabaseClient) {
+            const { error } = await window.supabaseClient.rpc('increment_platform_view', { platform_id: platformId });
+            if (!error) {
+                localStorage.setItem(CLICK_KEY, currentTime);
+            } else {
+                console.error('플랫폼 클릭 수 증가 실패:', error);
+            }
         }
     } catch (error) {
-        console.error('플랫폼 클릭 수 증가 실패:', error);
+        console.error('플랫폼 클릭 통신 오류:', error);
     }
 }
 
