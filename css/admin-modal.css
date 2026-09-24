@@ -7,7 +7,6 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    /* 무거운 backdrop-filter 대신 투명도 높은 단색 배경 사용 (렉 유발 원인 제거) */
     background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
@@ -24,19 +23,25 @@
 }
 
 .admin-modal-box {
-    /* 배경 변수 대신 rgba로 투명도 직접 조절 (예: 85% 불투명) */
-    background: rgba(30, 30, 30, 0.85); 
+    /* 기존 고정 어두운 배경 대신 카드 배경 변수나 라이트/다크 대응 색상 적용 */
+    background: var(--bg-color, #1e1e1e); 
     border: 1px solid var(--border-color, #444);
     padding: 30px;
     border-radius: 16px;
     width: 100%;
     max-width: 360px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     color: var(--text-main, #fff);
     text-align: center;
     transform: translateY(10px);
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, background-color 0.4s ease, color 0.4s ease;
     will-change: transform;
+}
+
+/* 라이트 모드일 때 모달 배경을 확실하게 밝은 색으로 처리하고 싶다면 아래 추가 */
+body.light .admin-modal-box {
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .admin-modal-overlay.show .admin-modal-box {
@@ -65,7 +70,7 @@
 
 .admin-modal-input {
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.07);
+    background-color: var(--card-bg, rgba(255, 255, 255, 0.07));
     border: 1px solid var(--border-color, #444);
     color: var(--text-main, #fff);
     padding: 10px 14px;
@@ -77,6 +82,7 @@
 
 body.light .admin-modal-input {
     background-color: rgba(0, 0, 0, 0.04);
+    color: #1f2937;
 }
 
 .admin-modal-input:focus {
@@ -102,12 +108,12 @@ body.light .admin-modal-input {
 }
 
 .admin-modal-btn.cancel {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-sub, #aaa);
+    background-color: var(--card-bg);
+    color: var(--text-sub);
 }
 
 .admin-modal-btn.cancel:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--card-hover-bg);
 }
 
 .admin-modal-btn.submit {
