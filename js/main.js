@@ -520,50 +520,56 @@ function showToast(message) {
 // ==========================================
 // 5. Supabase 방문 및 클릭 집계
 // ==========================================
+// 사이트 방문 기록 추적 함수 수정 예시
 async function trackSiteVisit() {
-    try {
-        // 방금 배포한 내 Edge Function의 URL
-        const functionUrl = 'https://mojcgizzrwsatgsvboib.supabase.co/functions/v1/track-visit';
-        
-        const response = await fetch(functionUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // Supabase Anon Key(공개용 키)를 Authorization 헤더에 넣어줍니다
-                'Authorization': `sb_publishable_vXeVkey0aLcuVxeLws219A_YPEz_Ze6`
+    const VISIT_KEY = 'site_visit_timestamp';
+    const COOLDOWN_TIME = 30 * 60 * 1000; // 30분을 밀리초로 계산 (원하는 시간으로 변경 가능)
+    
+    const lastVisitTime = localStorage.getItem(VISIT_KEY);
+    const currentTime = new Date().getTime();
+
+    // 마지막 방문 기록이 없거나, 30분이 지난 경우에만 조회수 증가 API 호출
+    if (!lastVisitTime || (currentTime - lastVisitTime > COOLDOWN_TIME)) {
+        try {
+            // 기존에 Supabase Edge Function을 호출하던 코드 (예시)
+            const response = await fetch('https://mojcgizzrwsatgsvboib.supabase.co/functions/v1/track-visit/track-visit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'visit' })
+            });
+
+            if (response.ok) {
+                // 현재 시간을 저장하여 30분 동안은 다시 안 올라가게 막음
+                localStorage.setItem(VISIT_KEY, currentTime);
             }
-        });
-        
-        const data = await response.json();
-        console.log('방문 집계 결과:', data);
-    } catch (err) {
-        console.error('방문 집계 에러:', err);
+        } catch (error) {
+            console.error('방문 기록 저장 실패:', error);
+        }
     }
 }
 
-// 페이지가 로드될 때 실행
-trackSiteVisit();
+// 플랫폼 클릭 처리 함수 수정 예시
+async function handlePlatformClick(platformId) {
+    const CLICK_KEY = `platform_click_${platformId}`;
+    const COOLDOWN_TIME = 10 * 60 * 1000; // 동일 플랫폼은 10분 동안 1번만 카운트
+    
+    const lastClickTime = localStorage.getItem(CLICK_KEY);
+    const currentTime = new Date().getTime();
 
-async function handlePlatformClick(event, platformId, targetUrl) {
-    event.preventDefault();
-        
+    // 10분이 지나지 않았다면 조회수를 올리지 않고 바로 링크로 이동만 시킴
+    if (lastClickTime && (currentTime - lastClickTime < COOLDOWN_TIME)) {
+        console.log('너무 빠른 중복 클릭입니다.');
+        return; 
+    }
+
     try {
-        const clickKey = `clicked_${platformId}`;
+        // Supabase RPC 또는 클릭 증가 함수 호출
+        // 예: await supabase.rpc('increment_view', { platform_id: platformId });
         
-        if (!sessionStorage.getItem(clickKey)) {
-            if (window.supabaseClient) {
-                const { error } = await window.supabaseClient.rpc('increment_view', { row_id: platformId });
-                if (error) {
-                    console.error('조회수 증가 오류:', error);
-                } else {
-                    sessionStorage.setItem(clickKey, 'true');
-                }
-            }
-        }
-    } catch (err) {
-        console.error('Supabase 호출 에러:', err);
-    } finally {
-        window.open(targetUrl, '_blank');
+        // 정상 처리되면 현재 시간 저장
+        localStorage.setItem(CLICK_KEY, currentTime);
+    } catch (error) {
+        console.error('클릭 수 증가 실패:', error);
     }
 }
 
