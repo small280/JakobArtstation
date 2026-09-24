@@ -29,6 +29,17 @@
 
       gtag('config', 'G-RWZBF3D6CW');
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 👇 아래 Supabase 초기화 코드를 추가해야 합니다! -->
+    <script>
+        const SUPABASE_URL = 'https://mojcgizzrwsatgsvboib.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_vXeVkey0aLcuVxeLws219A_YPEz_Ze6';
+        
+        // 전역 supabase 객체 생성
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
 </head>
 
 <body>
@@ -566,7 +577,7 @@
         // 플랫폼 링크 클릭 시 조회수 증가 함수
         async function handlePlatformClick(event, platformId, targetUrl) {
             event.preventDefault(); // 기본 이동 일시 정지
-                
+
             try {
                 // supabase 객체가 전역에 존재하고 초기화된 경우에만 통계 요청 수행
                 if (typeof supabase !== 'undefined' && supabase) {
