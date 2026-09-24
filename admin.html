@@ -76,15 +76,16 @@
                 return;
             }
 
-            // 2. 전체 통합 합산 계산 및 반영
-            let totalToday = platforms.reduce((sum, p) => sum + (p.today_views || p.today || 0), 0);
-            let totalAll = platforms.reduce((sum, p) => sum + (p.total_views || p.total || 0), 0);
+            // 2. 'site_visit'(사이트 방문자 데이터)와 우측 SNS 플랫폼 데이터를 분리
+            const siteVisitData = platforms.find(p => p.id === 'site_visit') || { today_views: 0, total_views: 0 };
+            const snsPlatforms = platforms.filter(p => p.id !== 'site_visit');
 
-            document.getElementById('total-today-views').textContent = totalToday.toLocaleString();
-            document.getElementById('total-all-views').textContent = totalAll.toLocaleString();
+            // 3. 좌측 카드에 사이트 방문자 수 독립 반영
+            document.getElementById('total-today-views').textContent = (siteVisitData.today_views || 0).toLocaleString();
+            document.getElementById('total-all-views').textContent = (siteVisitData.total_views || 0).toLocaleString();
 
-            // 3. 실제 DB 데이터로 리스트 다시 렌더링
-            renderPlatforms(platforms);
+            // 4. 우측 상세 리스트에는 SNS 플랫폼만 다시 렌더링
+            renderPlatforms(snsPlatforms);
         }
 
         function renderPlatforms(platforms) {
@@ -157,22 +158,22 @@
         <!-- 대시보드 메인 콘텐츠 그리드 -->
         <div class="dashboard-grid">
             
-            <!-- [좌측] 오늘 조회수 -->
+            <!-- [좌측] 오늘 조회수 (사이트 방문자 전용) -->
             <div class="admin-card total-views-card">
                 <div class="main-today-label">
-                    <i class="fa-solid fa-fire"></i> 오늘 통합 조회수
+                    <i class="fa-solid fa-fire"></i> 오늘 사이트 방문수
                 </div>
                 <div class="main-today-value" id="total-today-views">0</div>
                 
                 <div class="total-views-divider"></div>
                 
                 <div class="sub-total-wrapper">
-                    <span>누적 총 조회수:</span>
+                    <span>누적 총 방문수:</span>
                     <strong id="total-all-views">0</strong>
                 </div>
             </div>
 
-            <!-- [우측] 각 SNS별 상세 조회수 -->
+            <!-- [우측] 각 SNS별 상세 조회수 (플랫폼 클릭 집계 전용) -->
             <div class="admin-card">
                 <div class="sns-stats-top-container">
                     <div class="sns-stats-title">

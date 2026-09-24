@@ -495,3 +495,23 @@ window.resumeWeatherAnimation = function() {
         }
     }
 };
+
+// 사이트 접속 시 전체 방문자수 증가 함수
+async function trackSiteVisit() {
+    try {
+        if (window.supabaseClient) {
+            // 접속 시 'site_visit' 행의 조회수를 1 증가시킴
+            const { error } = await window.supabaseClient.rpc('increment_view', { row_id: 'site_visit' });
+            if (error) {
+                console.error('사이트 방문 집계 오류:', error);
+            }
+        }
+    } catch (err) {
+        console.error('사이트 방문 집계 에러:', err);
+    }
+}
+
+// 페이지가 완전히 로드될 때 실행
+document.addEventListener('DOMContentLoaded', () => {
+    trackSiteVisit();
+});
