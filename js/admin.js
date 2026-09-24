@@ -106,7 +106,7 @@ async function loadCountryStats() {
         let ref = row.referrer ? row.referrer.trim() : '';
 
         if (!ref || ref === '') {
-            ref = '직접 접속 (Direct)';
+            ref = 'Direct';
         } else if (ref.includes('t.co')) {
             ref = 'Twitter / X';
         } else if (ref.includes('instagram.com')) {
